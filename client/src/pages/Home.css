@@ -6,13 +6,14 @@
   background: linear-gradient(135deg, var(--color-primary) , hsl(var(--color-primary-h), var(--color-primary-s), 40%));
   display: flex;
   align-items: center;
-  padding: 2rem;
+  padding: 2rem 0;
 }
 
 .hero-container {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  padding: 0 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -78,12 +79,13 @@
 /* Features Section */
 .features {
   background: linear-gradient(180deg, #2563eb 0%, #1e3a8a 100%);
-  padding: 4rem 2rem;
+  padding: 4rem 0;
 }
 
 .features-container {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0 2rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
@@ -102,12 +104,13 @@
 /* Visualization Section */
 .visualization {
   background: #0f172a;
-  padding: 6rem 2rem;
+  padding: 6rem 0;
 }
 
 .visualization-container {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0 2rem;
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 4rem;
@@ -152,12 +155,13 @@
 .footer {
   background: #020617;
   color: white;
-  padding: 4rem 2rem 2rem;
+  padding: 4rem 0 2rem;
 }
 
 .footer-container {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0 2rem;
   display: flex;
   justify-content: space-between;
   margin-bottom: 3rem;
@@ -188,8 +192,8 @@
 .footer-bottom {
   max-width: 1400px;
   margin: 0 auto;
+  padding: 2rem 2rem 0;
   text-align: center;
-  padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.6);
 }
