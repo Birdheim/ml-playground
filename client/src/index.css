@@ -37,6 +37,7 @@
 
   /* Text */
   --color-text-primary: hsl(220, 10%, 10%);
+  --color-text-light: hsl(220, 10%, 95%);
   --color-text-secondary: hsl(220, 10%, 35%);
   --color-text-tertiary: hsl(220, 10%, 60%);
 
