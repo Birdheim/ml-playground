@@ -97,5 +97,5 @@ export const api = {
       throw new Error(error.detail || 'Training failed')
     }
     return response.json()
-  }
-}
+  },
+};

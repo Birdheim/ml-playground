@@ -1,0 +1,71 @@
+/* src/components/ThemeToggle.css */
+.theme-toggle-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.theme-toggle-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle-button:hover {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-border-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.theme-toggle-button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.theme-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.theme-reset-button {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.theme-reset-button:hover {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-hover);
+}
+
+.theme-reset-button:active {
+    background-color: var(--color-surface-hover);
+}
+
+/* Optional: Make it more compact on mobile */
+@media (max-width: 640px) {
+    .theme-label {
+        display: none;
+    }
+    
+    .theme-toggle-button {
+        padding: var(--spacing-sm);
+        font-size: var(--font-size-xl);
+    }
+}
