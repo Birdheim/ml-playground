@@ -1,8 +1,8 @@
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import './ThemeToggle.css'
 
-export function ThemeToggle() {
-    const {theme, toggleTheme, userPreference, clearThemePreference} = useTheme();
+function ThemeToggle() {
+    const { theme, toggleTheme, userPreference, clearThemePreference } = useTheme();
 
     return (
         <div className="theme-toggle-container">
@@ -31,3 +31,5 @@ export function ThemeToggle() {
         </div>
     );
 }
+
+export default ThemeToggle

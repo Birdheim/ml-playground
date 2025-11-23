@@ -10,8 +10,10 @@
   line-height: 1.5;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased; /* Chrome/Safari, Makes fonts look smoother/thinner on screens by blending pixels */
-  -moz-osx-font-smoothing: grayscale; /* Firefox on Mac, Makes fonts look smoother/thinner on screens by blending pixels */
+  -webkit-font-smoothing: antialiased;
+  /* Chrome/Safari, Makes fonts look smoother/thinner on screens by blending pixels */
+  -moz-osx-font-smoothing: grayscale;
+  /* Firefox on Mac, Makes fonts look smoother/thinner on screens by blending pixels */
 
   /* ===== Light MODE (DEFAULT) ===== */
 
@@ -20,18 +22,36 @@
   --color-primary-l: 35%;
   --color-primary-dark-l: 20%;
 
-  --color-primary: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l)); 
-  --color-primary-dark: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l)); 
+  --color-primary: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l));
+  --color-primary-dark: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-dark-l));
+
+  --color-primary-10: hsl(var(--color-primary-h), var(--color-primary-s), 10%);
+  --color-primary-15: hsl(var(--color-primary-h), var(--color-primary-s), 15%);
+  --color-primary-20: hsl(var(--color-primary-h), var(--color-primary-s), 20%);
+  --color-primary-25: hsl(var(--color-primary-h), var(--color-primary-s), 25%);
+  --color-primary-30: hsl(var(--color-primary-h), var(--color-primary-s), 30%);
+  --color-primary-35: hsl(var(--color-primary-h), var(--color-primary-s), 35%);
+  --color-primary-40: hsl(var(--color-primary-h), var(--color-primary-s), 40%);
+  --color-primary-45: hsl(var(--color-primary-h), var(--color-primary-s), 45%);
+  --color-primary-50: hsl(var(--color-primary-h), var(--color-primary-s), 50%);
+  --color-primary-55: hsl(var(--color-primary-h), var(--color-primary-s), 55%);
+  --color-primary-60: hsl(var(--color-primary-h), var(--color-primary-s), 60%);
+  --color-primary-65: hsl(var(--color-primary-h), var(--color-primary-s), 65%);
+  --color-primary-70: hsl(var(--color-primary-h), var(--color-primary-s), 70%);
+  --color-primary-75: hsl(var(--color-primary-h), var(--color-primary-s), 75%);
+  --color-primary-80: hsl(var(--color-primary-h), var(--color-primary-s), 80%);
 
   --color-primary-hover: hsl(var(--color-primary-h), var(--color-primary-s), 40%);
   --color-primary-light: hsl(var(--color-primary-h), var(--color-primary-s), 65%);
 
   /* Accent colors */
   --color-accent: hsl(var(--color-primary-h), var(--color-primary-s), 55%);
+  --color-accent-dark: hsl(var(--color-primary-h), var(--color-primary-s), 45%);
   --color-accent-light: hsl(var(--color-primary-h), var(--color-primary-s), 65%);
 
   /* Backgrounds */
-  --color-background: hsl(var(--color-primary-h), 15%, 95%); /* Gray */
+  --color-background: hsl(var(--color-primary-h), 15%, 95%);
+  /* Gray */
   --color-surface: var(--color-accent);
   --color-surface-hover: hsl(var(--color-primary-h), var(--color-primary-s), 60%);
 
@@ -52,25 +72,35 @@
   --color-info: hsl(210, 90%, 56%);
 
   /* Spacing System */
-  --spacing-xs: 0.25rem;   /* 4px */
-  --spacing-sm: 0.5rem;    /* 8px */
-  --spacing-md: 1rem;      /* 16px */
-  --spacing-lg: 1.5rem;    /* 24px */
-  --spacing-xl: 2rem;      /* 32px */
+  --spacing-xs: 0.25rem;
+  /* 4px */
+  --spacing-sm: 0.5rem;
+  /* 8px */
+  --spacing-md: 1rem;
+  /* 16px */
+  --spacing-lg: 1.5rem;
+  /* 24px */
+  --spacing-xl: 2rem;
+  /* 32px */
   --spacing-2xl: 3rem;
-  
+
   /* Border Radius */
-  --radius-sm: 0.25rem;    /* 4px */
-  --radius-md: 0.5rem;     /* 8px */
-  --radius-lg: 1rem;       /* 16px */
-  --radius-xl: 1.5rem;     /* 24px */
-  --radius-full: 9999px;   /* For pills/circles */
+  --radius-sm: 0.25rem;
+  /* 4px */
+  --radius-md: 0.5rem;
+  /* 8px */
+  --radius-lg: 1rem;
+  /* 16px */
+  --radius-xl: 1.5rem;
+  /* 24px */
+  --radius-full: 9999px;
+  /* For pills/circles */
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  
+
   /* Typography */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -90,33 +120,41 @@
 /* ===== DARK MODE ===== */
 [data-theme="dark"] {
   /* Primary - lighter/more vibrant in dark mode */
-  --color-primary: hsl(var(--color-primary-h), var(--color-primary-s), 65%);
+  --color-primary-h: 210;
+  --color-primary-s: 70%;
+  --color-primary-l: 35%;
+  --color-primary-dark-l: 20%;
+
+  --color-primary: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l));
+  --color-primary-dark: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-dark-l));
+
+
   --color-primary-hover: hsl(var(--color-primary-h), var(--color-primary-s), 70%);
   --color-primary-light: hsl(var(--color-primary-h), var(--color-primary-s), 75%);
-  
+
   --color-secondary: hsl(260, 80%, 70%);
-  --color-accent: hsl(160, 70%, 50%);
-  
+  --color-accent: hsl(var(--color-primary-h), var(--color-primary-s), 55%);
+
   /* Backgrounds - dark grays with slight blue tint */
-  --color-background: hsl(220, 15%, 10%);
+  --color-background: var(--color-primary);
   --color-surface: hsl(220, 15%, 14%);
   --color-surface-hover: hsl(220, 15%, 18%);
-  
+
   /* Text - lighter in dark mode */
   --color-text-primary: hsl(220, 15%, 95%);
   --color-text-secondary: hsl(220, 10%, 70%);
   --color-text-tertiary: hsl(220, 8%, 55%);
-  
+
   /* Borders - lighter in dark mode */
   --color-border: hsl(220, 15%, 25%);
   --color-border-hover: hsl(220, 15%, 35%);
-  
+
   /* Status colors - slightly adjusted for dark backgrounds */
   --color-success: hsl(140, 65%, 50%);
   --color-warning: hsl(40, 90%, 60%);
   --color-error: hsl(0, 70%, 60%);
   --color-info: hsl(210, 85%, 65%);
-  
+
   /* Shadows - darker and more prominent */
   --shadow-sm: 0 1px 2px 0 hsl(0, 0%, 0%, 0.3);
   --shadow-md: 0 4px 6px -1px hsl(0, 0%, 0%, 0.4);
@@ -127,12 +165,17 @@
 /* Base element styles */
 body {
   margin: 0;
-  background-color: var(--color-background);
+  background-color: var(--color-primary);
   color: var(--color-text-primary);
   transition: background-color var(--transition-base), color var(--transition-base);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--color-text-primary);
   line-height: 1.2;
 }

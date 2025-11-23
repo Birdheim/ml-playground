@@ -1,9 +1,10 @@
 /* src/components/ThemeToggle.css */
 .theme-toggle-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--spacing-sm);
     align-items: center;
+    justify-content: center;
 }
 
 .theme-toggle-button {
@@ -63,7 +64,7 @@
     .theme-label {
         display: none;
     }
-    
+
     .theme-toggle-button {
         padding: var(--spacing-sm);
         font-size: var(--font-size-xl);

@@ -1,0 +1,12 @@
+.auto-size-text {
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.bold-text {
+    font-weight: 500;
+}
+
+.normal-text {
+    font-weight: 250;
+}

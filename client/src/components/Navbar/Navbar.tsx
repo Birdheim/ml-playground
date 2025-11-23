@@ -8,7 +8,7 @@ interface NavbarProps {
 
 function Navbar({ isLight }: NavbarProps) {
   const textColor = isLight ? 'var(--color-text-primary)' : 'var(--color-text-light)'
-  
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -17,7 +17,7 @@ function Navbar({ isLight }: NavbarProps) {
           <span className="navbar-logo-ml">ML</span>
           <span> Playground</span>
         </Link>
-        
+
         {/* Right side - Menu */}
         <div className="navbar-menu">
           <Link to="/resources" className="navbar-link" style={{ color: textColor }}>
