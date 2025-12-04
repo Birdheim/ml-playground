@@ -1,10 +1,27 @@
 import './VisualizationSection.css'
 import LossLandscape from '../../../../assets/loss_landscape.jpg'
+import { motion } from 'framer-motion'
 
 function VisualizationSection() {
   return (
     <section className="visualization">
-      <div className="visualization-container">
+      <motion.div
+        className="visualization-container"
+        initial={{
+          opacity: 0
+        }}
+        whileInView={{
+          opacity: 1,
+          scale: 1.05,
+          transition: {
+            duration: 1
+          }
+        }}
+        viewport={{
+          once: true,
+          amount: 0.4,
+        }}
+      >
         <div className="visualization-image">
           <div className="contour-placeholder">
             <img src={LossLandscape} alt="Loss Landscape illustration" className="contour-svg" />
@@ -22,7 +39,7 @@ function VisualizationSection() {
             model behavior. Perfect for both beginners and experienced practitioners.
           </p>
         </div>
-      </div>
+      </motion.div>
     </section>
   )
 }

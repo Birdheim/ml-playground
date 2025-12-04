@@ -30,16 +30,6 @@
   --color-primary-20: hsl(var(--color-primary-h), var(--color-primary-s), 20%);
   --color-primary-25: hsl(var(--color-primary-h), var(--color-primary-s), 25%);
   --color-primary-30: hsl(var(--color-primary-h), var(--color-primary-s), 30%);
-  --color-primary-35: hsl(var(--color-primary-h), var(--color-primary-s), 35%);
-  --color-primary-40: hsl(var(--color-primary-h), var(--color-primary-s), 40%);
-  --color-primary-45: hsl(var(--color-primary-h), var(--color-primary-s), 45%);
-  --color-primary-50: hsl(var(--color-primary-h), var(--color-primary-s), 50%);
-  --color-primary-55: hsl(var(--color-primary-h), var(--color-primary-s), 55%);
-  --color-primary-60: hsl(var(--color-primary-h), var(--color-primary-s), 60%);
-  --color-primary-65: hsl(var(--color-primary-h), var(--color-primary-s), 65%);
-  --color-primary-70: hsl(var(--color-primary-h), var(--color-primary-s), 70%);
-  --color-primary-75: hsl(var(--color-primary-h), var(--color-primary-s), 75%);
-  --color-primary-80: hsl(var(--color-primary-h), var(--color-primary-s), 80%);
 
   --color-primary-hover: hsl(var(--color-primary-h), var(--color-primary-s), 40%);
   --color-primary-light: hsl(var(--color-primary-h), var(--color-primary-s), 65%);
@@ -165,7 +155,7 @@
 /* Base element styles */
 body {
   margin: 0;
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-25);
   color: var(--color-text-primary);
   transition: background-color var(--transition-base), color var(--transition-base);
 }

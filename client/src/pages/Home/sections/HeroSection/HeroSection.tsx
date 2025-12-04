@@ -6,6 +6,7 @@ import FeatureCard from "../../../../components/FeatureCard";
 import './HeroSection.css'
 import AutoSizeText from "../../../../components/AutoSizeText";
 import StyledButton from "../../../../components/Button";
+import { motion } from 'framer-motion'
 
 function HeroSection() {
     const navigate = useNavigate()
@@ -19,9 +20,33 @@ function HeroSection() {
 
     return (
         <section className="hero">
-            <div className="hero-wrapper">
-                <div className="hero-container">
-                    <div className="hero-content">
+            <motion.div
+                className="hero-wrapper"
+                variants={{
+                    hidden: { opacity: 0 }, show: {
+                        opacity: 1,
+                        transition: {
+                            delay: 0.2,
+                            staggerChildren: 0.2,
+                        }
+                    }
+                }}
+                initial="hidden"
+                animate="show"
+            >
+                <motion.div className="hero-container"
+                    variants={{
+                        hidden: { opacity: 0 }, show: {
+                            opacity: 1,
+                            transition: {
+                                delay: 0.2,
+                                staggerChildren: 0.2,
+                            }
+                        }
+                    }}
+                >
+                    <motion.div className="hero-content"
+                        variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}>
                         <p className="hero-subtitle">Welcome to the</p>
                         <AutoSizeText boldText="Machine Learning" regularText="Playground" />
                         {/* TODO: Make button component */}
@@ -33,8 +58,18 @@ function HeroSection() {
                         >
                             Go to Playground →
                         </StyledButton>
-                    </div>
-                    <div className="hero-image">
+                    </motion.div>
+                    <motion.div className="hero-image"
+                        variants={{
+                            hidden: { opacity: 0 }, show: {
+                                opacity: 1,
+                                scale: 1.1,
+                                transition: {
+                                    duration: 0.5
+                                }
+                            }
+                        }}
+                    >
                         <img
                             src={robotImage}
                             alt="ML Robot named Eve"
@@ -42,15 +77,25 @@ function HeroSection() {
                             onMouseEnter={() => setRobotImage(eveCheer)}
                             onMouseLeave={() => setRobotImage(eve)}
                         />
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
 
-                <div className="features-container">
+                <motion.div className="features-container"
+                    variants={{
+                        hidden: { opacity: 0 }, show: {
+                            opacity: 1,
+                            transition: {
+                                delay: 0.2,
+                                staggerChildren: 0.2,
+                            }
+                        }
+                    }}
+                >
                     {featureText.map((text, index) => (
                         <FeatureCard key={index} text={text} />
                     ))}
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
         </section>
     )
 }

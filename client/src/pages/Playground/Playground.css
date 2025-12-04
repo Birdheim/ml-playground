@@ -1,0 +1,7 @@
+/* Base element styles */
+body {
+    margin: 0;
+    background-color: var(--color-accent);
+    color: var(--color-text-primary);
+    transition: background-color var(--transition-base), color var(--transition-base);
+}

@@ -1,4 +1,5 @@
 import './FeatureCard.css'
+import { motion } from 'framer-motion'
 
 interface FeatureCardProps {
     text: string
@@ -6,9 +7,11 @@ interface FeatureCardProps {
 
 function FeatureCard({ text }: FeatureCardProps) {
     return (
-        <div className='feature-card'>
+        <motion.div className='feature-card'
+            variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}
+        >
             <p>{text}</p>
-        </div>
+        </motion.div>
     )
 }
 

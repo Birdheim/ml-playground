@@ -1,35 +1,43 @@
 /* components/Navbar.css */
 .navbar {
   position: sticky;
-  top: 0;
+  top: 1rem;
+  /* Space from top */
   width: 100%;
-  padding: 1.5rem 2rem;
   z-index: 1000;
   font-family: 'Inter', sans-serif;
-}
-
-.navbar::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  backdrop-filter: blur(8px);
-
-  mask: linear-gradient(to bottom, black 0%, transparent 100%);
-  pointer-events: none;
-  z-index: -1;
+  display: flex;
+  justify-content: center;
+  padding: 0 2rem;
+  /* Side padding for the container */
 }
 
 .navbar-container {
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: 1200px;
+  /* Narrower for search bar feel */
+  width: 100%;
+  background: rgba(0, 0, 0, 0.05);
+  /* Semi-transparent */
+  backdrop-filter: blur(5px) saturate(100%);
+  -webkit-backdrop-filter: blur(5px) saturate(100%);
+  border: .01rem solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.navbar-container:hover {
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* Logo */
 .navbar-logo {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
   text-decoration: none;
   display: flex;
@@ -52,26 +60,32 @@
 /* Menu */
 .navbar-menu {
   display: flex;
-  gap: 3rem;
+  gap: 2rem;
   align-items: center;
 }
 
 .navbar-link {
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 400;
   position: relative;
+  transition: opacity 0.2s;
+}
+
+.navbar-link:hover {
+  opacity: 0.9;
 }
 
 .navbar-link::after {
   content: '';
   position: absolute;
-  bottom: -1px;
+  bottom: -2px;
   left: 0;
   width: 0;
-  height: 1px;
-  background: rgb(225, 225, 225);
-  transition: width 0.15s;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.2s ease;
+  border-radius: 2px;
 }
 
 .navbar-link:hover::after {
@@ -81,14 +95,28 @@
 /* Responsive */
 @media (max-width: 768px) {
   .navbar {
-    padding: 1rem 1.5rem;
+    padding: 0 1rem;
+    top: 0.5rem;
+  }
+
+  .navbar-logo-pg {
+    display: hidden;
+  }
+
+  .navbar-container {
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--radius-xl);
   }
 
   .navbar-menu {
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 
   .navbar-link {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .navbar-logo {
+    font-size: 1.1rem;
   }
 }

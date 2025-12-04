@@ -13,20 +13,20 @@
 
 .btn-hero {
     padding: 1rem 2rem;
-    background: linear-gradient(to right, var(--color-primary-15), var(--color-primary-20));
+    background: linear-gradient(to right, var(--color-primary-20), var(--color-primary-25));
     color: white;
     border-color: #2563eb;
     font-size: 1.25rem;
     box-shadow:
-        0 6px 12px rgba(59, 130, 246, 0.3),
+        0 6px 12px rgba(59, 130, 246, 0.2),
         inset 1px -1px 0 rgba(0, 0, 0, 0.2),
-        inset -1px 1px 2px 1px var(--color-primary-35);
+        inset -1px 1px 2px 1px var(--color-primary-30);
 }
 
 .btn-hero:hover {
     background: linear-gradient(to right, var(--color-primary-20), var(--color-primary-25));
     box-shadow:
         0 6px 12px rgba(59, 130, 246, 0.3),
-        inset 1px -1px 0 rgba(0, 0, 0, 0.2),
-        inset -1px 1px 2px 1px rgba(255, 255, 255, 0.3);
+        inset 1px -1px 0 rgba(0, 0, 0, 0.3),
+        inset -1px 1px 2px 1px rgba(255, 255, 255, 0.1);
 }
