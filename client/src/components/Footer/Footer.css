@@ -1,6 +1,6 @@
 .footer {
-    background: var(--color-primary-dark);
-    color: white;
+    background: var(--color-footer);
+    color: var(--text-on-brand);
     padding: 4rem 0 2rem;
 }
 
@@ -27,6 +27,7 @@
 }
 
 .footer-section h3 {
+    color: var(--text-on-brand);
     font-size: 1.2rem;
     margin-bottom: 1rem;
     font-weight: 600;
@@ -48,14 +49,14 @@
     text-align: right;
 }
 
-.footer-bottom {
+.footer-bottom-logo {
     max-width: 1400px;
     width: 100%;
     margin: 0 auto;
     display: block;
     text-align: center;
     justify-content: center;
-    color: hsl(var(--color-primary-h), var(--color-primary-s), 22%);
+    color: var(--color-footer-logo);
 }
 
 @media (max-width: 768px) {

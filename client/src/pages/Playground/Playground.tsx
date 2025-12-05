@@ -3,7 +3,7 @@ import './Playground.css'
 function Playground() {
     return (
         <>
-            <div>
+            <div className='wrapper'>
 
             </div>
         </>

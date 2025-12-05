@@ -13,7 +13,7 @@
 
 .btn-hero {
     padding: 1rem 2rem;
-    background: linear-gradient(to right, var(--color-primary-20), var(--color-primary-25));
+    background: linear-gradient(to right, var(--color-primary-30), var(--color-primary-light));
     color: white;
     border-color: #2563eb;
     font-size: 1.25rem;

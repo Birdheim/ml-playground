@@ -27,7 +27,7 @@ function Footer() {
           </ul>
         </div>
       </div>
-      <div className="footer-bottom">
+      <div className="footer-bottom-logo">
         <AutoSizeText boldText="Machine Learning" regularText="Playground" />
       </div>
     </footer>

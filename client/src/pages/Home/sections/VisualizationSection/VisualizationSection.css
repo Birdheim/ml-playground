@@ -1,5 +1,5 @@
 .visualization {
-  background: hsl(var(--color-primary-h), var(--color-primary-s), 15%);
+  background: var(--color-brand-dark);
   padding: 6rem 0;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .visualization-text {
-  color: white;
+  color: var(--text-on-brand);
 }
 
 .visualization-text h2 {

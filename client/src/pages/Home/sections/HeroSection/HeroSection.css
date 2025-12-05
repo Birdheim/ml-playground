@@ -45,12 +45,12 @@
     width: 100%;
     flex: 3;
     text-align: left;
-    color: var(--color-text-light);
+    color: var(--text-on-brand);
 }
 
 .hero-subtitle {
     font-size: 1.5rem;
-    color: var(--color-text-light);
+    color: var(--text-on-brand);
     font-weight: 300;
 }
 

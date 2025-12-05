@@ -15,7 +15,7 @@ function Navbar({ isLight }: NavbarProps) {
         {/* Left side - Logo */}
         <Link to="/" className="navbar-logo" style={{ color: textColor }}>
           <span className="navbar-logo-ml">ML</span>
-          <span> Playground</span>
+          <span className="navbar-logo-pg"> Playground</span>
         </Link>
 
         {/* Right side - Menu */}
