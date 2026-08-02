@@ -36,7 +36,7 @@ interface SVMParams {
 
 interface KNNParams {
   n_neighbors: number;
-  whieghts: 'uniform' | 'distance';  // Note: typo in backend
+  weights: 'uniform' | 'distance';
 }
 
 interface DecisionTreeParams {

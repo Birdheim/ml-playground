@@ -16,7 +16,7 @@ class SVMParams(BaseModel):
 class KNNParams(BaseModel):
     """Hyperparameters for K-Nearest Neighbors."""
     n_neighbors: int
-    whieghts: Literal["uniform", "distance"] = "uniform"
+    weights: Literal["uniform", "distance"] = "uniform"
 
 class DecisionTreeParams(BaseModel):
     """Hyperparameters for Decision Tree."""
