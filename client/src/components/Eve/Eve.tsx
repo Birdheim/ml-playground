@@ -16,14 +16,14 @@ interface EveProps {
     mood?: EveMood
     /** What Eve says. Leave empty for no speech bubble. */
     message?: string
-    /** Which side the speech bubble sits on. */
-    bubbleSide?: 'left' | 'right'
+    /** Where the bubble sits. 'below' suits a narrow column, beside suits a wide one. */
+    bubblePlacement?: 'left' | 'right' | 'below'
     size?: 'sm' | 'md' | 'lg'
 }
 
-function Eve({ mood = 'neutral', message, bubbleSide = 'right', size = 'md' }: EveProps) {
+function Eve({ mood = 'neutral', message, bubblePlacement = 'right', size = 'md' }: EveProps) {
     return (
-        <div className={`eve eve-${size} eve-bubble-${bubbleSide}`}>
+        <div className={`eve eve-${size} eve-bubble-${bubblePlacement}`}>
             <img
                 className="eve-image"
                 src={EVE_POSES[mood]}

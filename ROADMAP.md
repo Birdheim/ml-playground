@@ -38,9 +38,14 @@ would mean the core loop needs an API key to work at all.
 
 **Decision: Eve reacts to results, not to slide numbers.** Rather than a
 skippable intro carousel, she lives inside the Playground and responds to what
-the user actually did. `k=1` gets a worried Eve; 29/30 correct gets a cheering
-Eve. Her emotional states are earned by real outcomes, which is what makes them
-mean anything.
+the user actually did. A locked experiment gets a hiding Eve; 103 of 143 gets a
+comparison against what you guessed. Her emotional states are earned by real
+outcomes, which is what makes them mean anything.
+
+**Decision: Eve is a sticky side rail, not a page header.** As a header she and
+her speech bubble scrolled away exactly when the user reached the thing she was
+explaining. She now stays on screen the whole way down, and drops to a normal
+block under 860px where there is no room for a rail.
 
 ## Routing
 
@@ -49,7 +54,8 @@ Settled naming, replacing the mix of `Tutorial` / `Resources` / `Playground`:
 | Route | Nav label | Contents |
 |---|---|---|
 | `/` | — | Landing page (hero, what this is) |
-| `/playground` | Playground | dataset → model → train → results |
+| `/playground` | Playground | The gallery of questions |
+| `/playground/:experiment` | — | One question, walked through in stages |
 | `/learn` | Learn | Concept explanations, Eve's longer-form teaching |
 | `/about` | About | Me, the project, the GitHub link |
 
@@ -75,6 +81,48 @@ So the result panel reports:
   error teaches more than any metric, and it makes the model feel fallible and
   inspectable rather than magic.
 
+## The second insight: a control panel is not a lesson
+
+The first version of the playground put a dataset picker, four model cards and
+two sliders on one screen. That is a **control panel**, and control panels are
+for people who already know what the knobs do. It asked a visitor to choose
+between a Support Vector Machine and a Decision Tree before giving them any
+basis for choosing — and before giving them any reason to care about the
+answer. Three decisions were required before anything happened.
+
+Two decisions came out of that.
+
+**Lead with a question, not a dataset.** `/playground` is a gallery of
+questions in plain language: *Who survived the Titanic?*, *How much is this
+house worth?*. Not "Classification" and "Regression" — those name the
+technique, and the technique is the part the audience does not have yet.
+
+**Put the payoff before the controls.** Inside an experiment the stages are:
+
+1. **intro** — Eve asks the question and shows five real rows
+2. **guess** — "out of 143 passengers it has never seen, how many will it get
+   right?" A slider, and the first call to action, about *them* rather than
+   about ML
+3. **result** — the score lands against their guess, Eve reacts
+4. **tinker** — *only now* do the model picker and settings appear
+
+Settings coming after the first result is the whole point. A newcomer gets a
+win before making a single decision, and each stage shows one thing instead of
+three panels competing at once.
+
+## Experiment catalogue — where new capabilities go
+
+`backend/services/experiment_catalog.py`, mirroring the model catalogue. Each
+entry is a question wrapped around a dataset, with its teaser, the name for one
+row ("passenger" beats "sample"), names for the answers, and optional display
+labels so a preview table can show "female" and "3rd" instead of 1 and 3.
+
+**Decision: unbuilt experiments stay visible in the gallery, locked.** Seeing
+*How much is this house worth?* greyed out with Eve explaining she has not
+learned regression yet is more encouraging than a gallery that looks finished.
+It also answers "where does Neural Nets go" — it goes here, as a question, with
+`available: False` until it works.
+
 ## Model catalogue — the extensibility decision
 
 **Decision: one config object is the single source of truth for models.**
@@ -93,6 +141,15 @@ against the catalogue instead of static per-model types. For a project whose
 goal is easy extension, one place to edit beats four.
 
 ## Charts and visuals
+
+**Decision: the model cards are diagrams, not paragraphs.** Four dense text
+blocks competing for attention looked nothing like the rest of the site and
+explained nothing at a glance. Each model now has a small inline SVG —
+KNN as a dot ringed by its nearest neighbours, a decision tree as a branching
+tree, logistic regression as dots split by a line, SVM as the same line with
+its margin drawn. The drawing carries the explanation, so the card only needs
+the model's name. They use `currentColor`, so they follow the theme and the
+selected state without extra rules.
 
 **Decision: no charting library for now.**
 
@@ -151,16 +208,30 @@ Free tiers worth trying: Google Gemini (easiest start), Groq (fast). Put the
 call behind one function in `services/` so swapping providers is a one-file
 change.
 
+## The Titanic dataset
+
+Iris, wine and breast cancer are ML canon and all abstract — nobody has
+intuitions about sepal width. Titanic is instantly graspable, and people can
+argue with the predictions, which is exactly the engagement this project wants.
+
+It is **not bundled with scikit-learn** (only iris, wine, breast cancer,
+digits, diabetes and linnerud ship offline), so it was downloaded from the
+seaborn-data mirror and preprocessed into `backend/datasets/titanic.csv`.
+
+Two things matter about that preprocessing, both in the script comments:
+
+- The raw file has an `alive` column that is the target spelled as yes/no.
+  Leaving it in gives a fake 100% and teaches nothing. It was verified to be an
+  exact copy of `survived`, then dropped, along with `class`, `who`,
+  `adult_male`, `embark_town` and `alone`, which restate other columns.
+- 177 rows have no age and were dropped, leaving 714 passengers.
+
+The result is pedagogically better than iris precisely because it is *worse*:
+around 74% for a decision tree and 65% for KNN, so there are real mistakes to
+look at and a visible difference between models, instead of iris's flat 100%.
+
 ## Ideas not yet built
 
-- **Guess before you train.** Eve asks "how many of the 30 will I get right?"
-  and you commit to a number before the reveal. Committing to a prediction
-  makes the result stick in a way passive watching doesn't, and it turns the
-  page into a game.
-- **A dataset a human recognises.** Iris, wine and breast cancer are ML canon
-  and all abstract — nobody has intuitions about sepal width. Something like
-  Titanic survival is instantly graspable and people can argue with the
-  model's predictions. CSV upload already handles the plumbing.
 - **Side-by-side comparison.** Train two configurations at once — `k=1` versus
   `k=20` — so overfitting is something you *see* rather than get told about.
 - **A deliberately bad preset.** Let people break the model on purpose and

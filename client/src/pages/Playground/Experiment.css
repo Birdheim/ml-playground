@@ -1,0 +1,342 @@
+/* ===== One experiment, walked through in stages ===== */
+
+.experiment {
+    display: grid;
+    grid-template-columns: 17rem minmax(0, 1fr);
+    gap: var(--spacing-2xl);
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    align-items: start;
+}
+
+/* Eve is the guide, so she stays on screen the whole way down rather than
+   scrolling away with the page header. */
+.experiment-eve {
+    position: sticky;
+    top: var(--spacing-2xl);
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+}
+
+.back-link:hover {
+    color: var(--color-primary);
+}
+
+.experiment-question {
+    margin-bottom: var(--spacing-xl);
+    font-size: var(--font-size-3xl);
+    line-height: 1.2;
+    color: var(--color-text-primary);
+}
+
+.stage {
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    background-color: var(--card-background);
+    box-shadow: var(--shadow-md);
+    animation: stage-in var(--transition-slow) ease-out;
+}
+
+.stage-title {
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-xl);
+    color: var(--color-text-primary);
+}
+
+.stage-lead {
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+.stage-note {
+    margin: var(--spacing-lg) 0;
+    padding-left: var(--spacing-md);
+    border-left: 3px solid var(--color-border);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    color: var(--color-text-tertiary);
+}
+
+.stage-error {
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-error);
+}
+
+/* ===== Data tables ===== */
+
+.sample-scroll {
+    overflow-x: auto;
+    margin-bottom: var(--spacing-md);
+}
+
+.sample-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+}
+
+.sample-table th,
+.sample-table td {
+    /* the extra right padding guarantees a gap between columns; without it
+       adjacent headings collide once a table has enough columns */
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) 0;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sample-table th {
+    /* headings wrap so a long column name doesn't push the answer column,
+       which is the whole point of the table, off the right-hand edge.
+       overflow-wrap catches names that have no space to break at — break-word
+       rather than anywhere, which would collapse the column's min-content
+       width and split short headings like "Age" mid-word. */
+    white-space: normal;
+    overflow-wrap: break-word;
+    max-width: 7rem;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-tertiary);
+}
+
+.sample-table td {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-secondary);
+}
+
+/* the answer column is the point of the table, so it gets separated out */
+.sample-table .answer-column {
+    border-left: 2px solid var(--color-border);
+    padding-left: var(--spacing-md);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.sample-table .guessed {
+    font-weight: 600;
+    color: var(--color-error);
+}
+
+.sample-table .actual {
+    font-weight: 600;
+    color: var(--color-success);
+}
+
+/* ===== The guess ===== */
+
+.guess-box {
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--color-background);
+    text-align: center;
+}
+
+.guess-value {
+    font-size: var(--font-size-2xl);
+    color: var(--color-text-tertiary);
+}
+
+.guess-value strong {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.guess-of {
+    color: var(--color-text-tertiary);
+}
+
+.guess-slider {
+    width: 100%;
+    margin-top: var(--spacing-md);
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
+
+.guess-scale {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+/* ===== The score ===== */
+
+.scoreline {
+    margin-bottom: var(--spacing-xl);
+}
+
+.score {
+    font-size: var(--font-size-4xl);
+    line-height: 1.1;
+    color: var(--color-primary);
+}
+
+.score strong {
+    font-size: 4rem;
+    font-weight: 700;
+}
+
+.score-of {
+    color: var(--color-text-tertiary);
+}
+
+.score-caption {
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.score-guess {
+    margin-left: var(--spacing-sm);
+    padding-left: var(--spacing-sm);
+    border-left: 1px solid var(--color-border);
+    color: var(--color-text-tertiary);
+}
+
+.mistakes-title {
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-lg);
+    color: var(--color-text-primary);
+}
+
+/* ===== Model picker ===== */
+
+.model-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.model-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    transition: border-color var(--transition-fast), background-color var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.model-card:hover {
+    border-color: var(--color-primary);
+}
+
+.model-card.is-selected {
+    border-color: var(--color-primary);
+    background-color: var(--color-accent-dark);
+    color: var(--text-on-brand);
+}
+
+.model-card-label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.3;
+    color: inherit;
+}
+
+.model-blurb {
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+/* ===== Settings ===== */
+
+.param {
+    margin-bottom: var(--spacing-lg);
+}
+
+.param-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.param-value {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-primary);
+}
+
+.param-slider {
+    width: 100%;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
+
+.param-select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--card-background);
+    color: var(--color-text-primary);
+    font-family: inherit;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+}
+
+.param-help {
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    line-height: 1.5;
+    color: var(--color-text-tertiary);
+}
+
+@keyframes stage-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stage {
+        animation: none;
+    }
+}
+
+@media (max-width: 860px) {
+    .experiment {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .experiment-eve {
+        position: static;
+    }
+
+    .stage {
+        padding: var(--spacing-lg);
+    }
+}

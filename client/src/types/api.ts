@@ -16,6 +16,40 @@ export interface UploadDatasetResponse {
   features: number;
 }
 
+// Experiment Types
+// An experiment is one question a person might actually ask, wrapped around a
+// dataset. The backend catalogue (services/experiment_catalog.py) is the
+// single source of truth, including for the ones that aren't built yet.
+
+export interface ExperimentSummary {
+  name: string;
+  question: string;
+  teaser: string;
+  /** What one row is: "passenger", "flower". Beats saying "sample". */
+  row_label: string;
+  available: boolean;
+  /** What Eve says about a locked experiment. Null when it's available. */
+  eve_says: string | null;
+}
+
+export interface ListExperimentsResponse {
+  experiments: ExperimentSummary[];
+}
+
+export interface ExperimentDetail {
+  name: string;
+  question: string;
+  teaser: string;
+  dataset: string;
+  row_label: string;
+  class_names: string[] | null;
+  /** Friendlier column headings, keyed by raw column name. */
+  column_labels: Record<string, string>;
+  /** Display values, e.g. is_female 1 -> "female". Keys are stringified. */
+  value_labels: Record<string, Record<string, string>>;
+  available: boolean;
+}
+
 // Model Catalogue Types
 // The backend describes its own models (see services/model_catalog.py) and the
 // settings form is built from that description, so adding a model there makes

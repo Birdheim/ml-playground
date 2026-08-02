@@ -1,0 +1,56 @@
+.model-diagram {
+    display: block;
+    width: 100%;
+    max-width: 6rem;
+    height: auto;
+    /* everything inside is drawn relative to the card's text colour, so the
+       diagram follows the theme and the selected state for free */
+    color: inherit;
+}
+
+.diagram-dot-a {
+    fill: currentColor;
+    opacity: 0.85;
+}
+
+.diagram-dot-b {
+    fill: currentColor;
+    opacity: 0.35;
+}
+
+.diagram-subject {
+    fill: currentColor;
+}
+
+.diagram-node {
+    fill: currentColor;
+    opacity: 0.6;
+}
+
+.diagram-ring {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-dasharray: 3 3;
+    opacity: 0.7;
+}
+
+.diagram-branch {
+    stroke: currentColor;
+    stroke-width: 1.5;
+    opacity: 0.45;
+}
+
+.diagram-boundary {
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.diagram-margin {
+    stroke: currentColor;
+    stroke-width: 1.25;
+    stroke-dasharray: 3 3;
+    opacity: 0.45;
+    stroke-linecap: round;
+}

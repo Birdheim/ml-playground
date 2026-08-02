@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 from services.dataset_registry import DatasetRegistry
 from services.builtin_datasets import BUILTIN_DATASETS
 from services.model_catalog import MODELS, validate_hyperparameters
+from services.experiment_catalog import class_names_for_dataset
 
 # How many misclassified rows to hand back. Enough to look at, few enough to read.
 MAX_MISTAKES = 5
@@ -38,9 +39,13 @@ def train_model(model_name: str, hyperparameters: dict, dataset_name: str = "win
     y = dataset["target"]
     feature_names = _as_list(dataset.get("feature_names") or [])
 
-    # Uploaded datasets have no names for their classes, so fall back to the
-    # raw label. Cast either way: numpy string types don't survive JSON.
-    if dataset.get("target_names") is not None:
+    # Prefer the experiment's own wording ("Did not survive" beats "0"), then
+    # whatever the dataset reports, then the raw label as a last resort. Cast
+    # either way: numpy string types don't survive JSON.
+    catalog_names = class_names_for_dataset(dataset_name)
+    if catalog_names:
+        class_names = list(catalog_names)
+    elif dataset.get("target_names") is not None:
         class_names = [str(name) for name in _as_list(dataset["target_names"])]
     else:
         class_names = [str(label) for label in sorted(set(y))]

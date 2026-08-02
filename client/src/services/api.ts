@@ -1,6 +1,8 @@
 import type {
   DatasetPreviewResponse,
+  ExperimentDetail,
   ListDatasetsResponse,
+  ListExperimentsResponse,
   ListModelsResponse,
   UploadDatasetResponse,
   TrainRequest,
@@ -36,6 +38,31 @@ export const api = {
     return response.json()
   },
   
+  /**
+   * Get the questions the playground can answer, including the ones that
+   * aren't built yet (flagged unavailable) so the gallery can show them.
+   */
+  async listExperiments(): Promise<ListExperimentsResponse> {
+    const response = await fetch(`${BASE_URL}/experiments`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch experiments')
+    }
+    return response.json()
+  },
+
+  /**
+   * Get one experiment, with the display labels its preview table needs.
+   * @param name - Experiment name
+   */
+  async getExperiment(name: string): Promise<ExperimentDetail> {
+    const response = await fetch(`${BASE_URL}/experiments/${name}`);
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to load experiment')
+    }
+    return response.json()
+  },
+
   /**
    * Get the available models and the settings each one accepts.
    * The playground builds its settings form from this.

@@ -9,6 +9,11 @@
     flex-direction: row-reverse;
 }
 
+.eve-bubble-below {
+    flex-direction: column;
+    align-items: center;
+}
+
 .eve-image {
     flex-shrink: 0;
     height: auto;
@@ -36,7 +41,8 @@
     background-color: var(--color-accent-dark);
     color: var(--text-on-brand);
     font-size: var(--font-size-sm);
-    letter-spacing: 0.02em;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
     box-shadow: var(--shadow-sm);
     animation: eve-bubble-in var(--transition-slow) ease-out;
 }
@@ -45,18 +51,30 @@
 .eve-bubble::before {
     content: '';
     position: absolute;
-    top: 1.25rem;
     border: 0.5rem solid transparent;
 }
 
 .eve-bubble-right .eve-bubble::before {
+    top: 1.25rem;
     right: 100%;
     border-right-color: var(--color-accent-dark);
 }
 
 .eve-bubble-left .eve-bubble::before {
+    top: 1.25rem;
     left: 100%;
     border-left-color: var(--color-accent-dark);
+}
+
+.eve-bubble-below .eve-bubble {
+    margin-top: var(--spacing-sm);
+    max-width: 100%;
+}
+
+.eve-bubble-below .eve-bubble::before {
+    bottom: 100%;
+    left: 2rem;
+    border-bottom-color: var(--color-accent-dark);
 }
 
 @keyframes eve-bubble-in {
@@ -77,14 +95,14 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 860px) {
     .eve-md .eve-image,
     .eve-lg .eve-image {
         width: 110px;
     }
 
     .eve-bubble {
-        max-width: 11rem;
-        padding: var(--spacing-sm);
+        max-width: 13rem;
+        padding: var(--spacing-sm) var(--spacing-md);
     }
 }

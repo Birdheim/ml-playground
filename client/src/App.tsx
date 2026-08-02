@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import Playground from './pages/Playground';
+import Experiment from './pages/Playground/Experiment';
 import WeAreUnpacking from './pages/WeAreUnpacking';
 import Footer from './components/Footer';
 
@@ -27,6 +28,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/playground" element={<Playground />} />
+        <Route path="/playground/:name" element={<Experiment />} />
         <Route path="/learn" element={<WeAreUnpacking />} />
         <Route path="/about" element={<WeAreUnpacking />} />
       </Routes>
