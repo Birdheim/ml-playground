@@ -20,11 +20,11 @@ function Navbar({ isLight }: NavbarProps) {
 
         {/* Right side - Menu */}
         <div className="navbar-menu">
-          <Link to="/resources" className="navbar-link" style={{ color: textColor }}>
-            Resources
-          </Link>
           <Link to="/playground" className="navbar-link" style={{ color: textColor }}>
             Playground
+          </Link>
+          <Link to="/learn" className="navbar-link" style={{ color: textColor }}>
+            Learn
           </Link>
           <Link to="/about" className="navbar-link" style={{ color: textColor }}>
             About

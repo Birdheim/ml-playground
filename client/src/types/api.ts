@@ -16,58 +16,65 @@ export interface UploadDatasetResponse {
   features: number;
 }
 
+// Model Catalogue Types
+// The backend describes its own models (see services/model_catalog.py) and the
+// settings form is built from that description, so adding a model there makes
+// it show up here without any change to this file.
+
+export interface NumberParam {
+  name: string;
+  label: string;
+  help: string;
+  type: 'int' | 'float';
+  default: number;
+  min: number;
+  max: number;
+}
+
+export interface ChoiceParam {
+  name: string;
+  label: string;
+  help: string;
+  type: 'choice';
+  default: string;
+  options: string[];
+}
+
+export type ModelParam = NumberParam | ChoiceParam;
+
+export interface ModelInfo {
+  name: string;
+  label: string;
+  blurb: string;
+  params: ModelParam[];
+}
+
+export interface ListModelsResponse {
+  models: ModelInfo[];
+}
+
 // Training Types
-export type ModelName = 
-  | 'logistic_regression' 
-  | 'svm' 
-  | 'knn' 
-  | 'decision_tree';
-
-// Base hyperparameters
-interface LogisticRegressionParams {
-  C: number;
-  max_iter: number;
-}
-
-interface SVMParams {
-  C: number;
-  kernel: 'linear' | 'poly' | 'rbf' | 'sigmoid';
-}
-
-interface KNNParams {
-  n_neighbors: number;
-  weights: 'uniform' | 'distance';
-}
-
-interface DecisionTreeParams {
-  max_depth: number | null;
-  criterion: 'gini' | 'entropy' | 'log_loss';
-}
-
-// Union type for all hyperparameters
-export type Hyperparameters = 
-  | LogisticRegressionParams
-  | SVMParams
-  | KNNParams
-  | DecisionTreeParams;
+export type Hyperparameters = Record<string, number | string>;
 
 export interface TrainRequest {
-  model_name: ModelName;
+  model_name: string;
   dataset_name: string;
   hyperparameters: Hyperparameters;
 }
 
-export interface TrainResponse {
-  accuracy: number;
+export interface Mistake {
+  features: Record<string, number>;
+  predicted: string;
+  actual: string;
 }
 
-// ===== UI STATE TYPES =====
-
-export interface TrainingRecord {
-  id: string;
-  timestamp: Date;
-  modelName: ModelName;
-  datasetName: string;
-  hyperparameters: Hyperparameters;
+export interface TrainResponse {
   accuracy: number;
+  n_correct: number;
+  n_test: number;
+  n_train: number;
+  n_mistakes: number;
+  mistakes: Mistake[];
+  class_names: string[];
+  feature_names: string[];
 }

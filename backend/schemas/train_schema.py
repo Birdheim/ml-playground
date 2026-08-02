@@ -1,55 +1,15 @@
-from pydantic import BaseModel
-from typing import Optional, Literal, Union, Annotated
-from pydantic import Field
+from pydantic import BaseModel, Field
 
-# Defining Model Parameters
-class LogisticRegressionParams(BaseModel):
-    """Hyperparameters for Logistic Regression."""
-    C: float
-    max_iter: int
+class TrainRequest(BaseModel):
+    """
+    A request to train one model on one dataset.
 
-class SVMParams(BaseModel):
-    """Hyperparameters for Support Vector Machine."""
-    C: float
-    kernel: Literal["linear", "poly", "rbf", "sigmoid"]
-
-class KNNParams(BaseModel):
-    """Hyperparameters for K-Nearest Neighbors."""
-    n_neighbors: int
-    weights: Literal["uniform", "distance"] = "uniform"
-
-class DecisionTreeParams(BaseModel):
-    """Hyperparameters for Decision Tree."""
-    max_depth: Optional[int] = None
-    criterion: Literal["gini", "entropy", "log_loss"] = "gini"
-
-class BaseTrainRequest(BaseModel):
-    """Base class for model training requests."""
-    dataset_name: str
-
-# Defining Model Requests
-class LogisticRegressionRequest(BaseTrainRequest):
-    """Logistic Regression training request"""
-    model_name: Literal["logistic_regression"]
-    hyperparameters: LogisticRegressionParams
-
-class SVMRequest(BaseTrainRequest):
-    """SVM training request"""
-    model_name: Literal["svm"]
-    hyperparameters: SVMParams
-
-class KNNRequest(BaseTrainRequest):
-    """KNN training request"""
-    model_name: Literal["knn"]
-    hyperparameters: KNNParams
-
-class DecisionTreeRequest(BaseTrainRequest):
-    """Decision Tree training request"""
-    model_name: Literal["decision_tree"]
-    hyperparameters: DecisionTreeParams
-
-# Supported training request for any one model. Union uses model_name as discriminator field
-TrainRequest = Annotated [
-    Union[LogisticRegressionRequest, SVMRequest, KNNRequest, DecisionTreeRequest], 
-    Field(description= "Training request supporting one of the available models")
-    ]
+    Hyperparameters are deliberately a free-form dict rather than a per-model
+    schema: the model catalogue in services/model_catalog.py is the single
+    source of truth for what each model accepts, and validates them. That way
+    adding a model is one entry in one file instead of a new schema class here,
+    a new branch in the trainer, and matching types in the frontend.
+    """
+    model_name: str = Field(description="Key of the model to train, e.g. 'knn'")
+    dataset_name: str = Field(description="Builtin dataset name or uploaded dataset filename")
+    hyperparameters: dict = Field(default_factory=dict, description="Model-specific settings; missing values fall back to defaults")

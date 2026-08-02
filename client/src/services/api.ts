@@ -1,6 +1,7 @@
 import type {
   DatasetPreviewResponse,
   ListDatasetsResponse,
+  ListModelsResponse,
   UploadDatasetResponse,
   TrainRequest,
   TrainResponse,
@@ -35,6 +36,18 @@ export const api = {
     return response.json()
   },
   
+  /**
+   * Get the available models and the settings each one accepts.
+   * The playground builds its settings form from this.
+   */
+  async listModels(): Promise<ListModelsResponse> {
+    const response = await fetch(`${BASE_URL}/models`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch models')
+    }
+    return response.json()
+  },
+
   /**
    * Get preview of a specific dataset
    * @param name - Dataset name

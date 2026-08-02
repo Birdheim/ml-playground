@@ -1,0 +1,90 @@
+.eve {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.eve-bubble-left {
+    flex-direction: row-reverse;
+}
+
+.eve-image {
+    flex-shrink: 0;
+    height: auto;
+}
+
+.eve-sm .eve-image {
+    width: 90px;
+}
+
+.eve-md .eve-image {
+    width: 150px;
+}
+
+.eve-lg .eve-image {
+    width: 220px;
+}
+
+.eve-bubble {
+    position: relative;
+    /* nudge the bubble down to sit level with Eve's head rather than her antenna */
+    margin-top: 12%;
+    max-width: 15rem;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    background-color: var(--color-accent-dark);
+    color: var(--text-on-brand);
+    font-size: var(--font-size-sm);
+    letter-spacing: 0.02em;
+    box-shadow: var(--shadow-sm);
+    animation: eve-bubble-in var(--transition-slow) ease-out;
+}
+
+/* little tail pointing back towards Eve */
+.eve-bubble::before {
+    content: '';
+    position: absolute;
+    top: 1.25rem;
+    border: 0.5rem solid transparent;
+}
+
+.eve-bubble-right .eve-bubble::before {
+    right: 100%;
+    border-right-color: var(--color-accent-dark);
+}
+
+.eve-bubble-left .eve-bubble::before {
+    left: 100%;
+    border-left-color: var(--color-accent-dark);
+}
+
+@keyframes eve-bubble-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eve-bubble {
+        animation: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .eve-md .eve-image,
+    .eve-lg .eve-image {
+        width: 110px;
+    }
+
+    .eve-bubble {
+        max-width: 11rem;
+        padding: var(--spacing-sm);
+    }
+}

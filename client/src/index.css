@@ -24,6 +24,7 @@
   --color-landing-blue-base: hsl(210, 80%, 35%);  /* Hero primary */
   --color-landing-blue-light: hsl(210, 80%, 50%); /* Accents/buttons */
   --text-on-brand: hsl(0, 0%, 95%);         /* White text */
+  --color-text-light: hsl(220, 10%, 95%);   /* Text on dark backgrounds (navbar, cards) */
 
   /* Footer */
   --color-footer: hsl(210, 80%, 20%);
@@ -99,7 +100,7 @@
 
   /* Accent colors */
   --color-accent: hsl(var(--color-primary-h), var(--color-primary-s), 55%);
-  --color-accent-dark: hsl(var(--color-primary-h), var(--color-primary-s), 45%);
+  --color-accent-dark: hsl(var(--color-primary-h), var(--color-primary-s), 40%);
   --color-accent-light: hsl(var(--color-primary-h), var(--color-primary-s), 65%);
 
   /* Borders */
@@ -118,30 +119,44 @@
   /* Primary - lighter/more vibrant in dark mode */
 
   /* Backgrounds */
-  --color-background: hsl(210, 80%, 20%);
-  --card-background: hsl(210, 15%, 98%);
+  --color-background: hsl(210, 80%, 16%);
+  --card-background: hsl(210, 45%, 22%);
 
   /* Text colors */
-  --color-text-primary: hsl(220, 10%, 10%);
-  --color-text-secondary: hsl(220, 10%, 25%);
-  --color-text-tertiary: hsl(220, 10%, 50%);
+  --color-text-primary: hsl(220, 10%, 95%);
+  --color-text-secondary: hsl(220, 10%, 85%);
+  --color-text-tertiary: hsl(220, 10%, 70%);
 
 
-  
+
   --color-primary-h: 210;
   --color-primary-s: 85%;
-  --color-primary-l: 35%;
+  /* Lighter than in light mode so it stays readable against dark surfaces */
+  --color-primary-l: 65%;
   --color-primary-dark-l: 20%;
 
   --color-primary: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l));
   --color-primary-dark: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-dark-l));
 
+  --color-primary-10: hsl(var(--color-primary-h), var(--color-primary-s), 10%);
+  --color-primary-15: hsl(var(--color-primary-h), var(--color-primary-s), 15%);
+  --color-primary-20: hsl(var(--color-primary-h), var(--color-primary-s), 20%);
+  --color-primary-25: hsl(var(--color-primary-h), var(--color-primary-s), 25%);
+  --color-primary-30: hsl(var(--color-primary-h), var(--color-primary-s), 30%);
 
-  --color-primary-hover: hsl(var(--color-primary-h), var(--color-primary-s), 70%);
+  --color-primary-hover: hsl(var(--color-primary-h), var(--color-primary-s), 75%);
   --color-primary-light: hsl(var(--color-primary-h), var(--color-primary-s), 75%);
 
   --color-secondary: hsl(260, 80%, 70%);
+
+  /* Accent colors */
   --color-accent: hsl(var(--color-primary-h), var(--color-primary-s), 55%);
+  --color-accent-dark: hsl(var(--color-primary-h), var(--color-primary-s), 40%);
+  --color-accent-light: hsl(var(--color-primary-h), var(--color-primary-s), 60%);
+
+  /* Borders - lighter than the surface they sit on, unlike in light mode */
+  --color-border: hsl(var(--color-primary-h), 40%, 38%);
+  --color-border-hover: hsl(var(--color-primary-h), 40%, 50%);
 
 
 
