@@ -19,7 +19,7 @@ function VisualizationSection() {
         }}
         viewport={{
           once: true,
-          amount: 0.4,
+          amount: 0.8,
         }}
       >
         <div className="visualization-image">

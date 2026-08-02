@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import HeroSection from './sections/HeroSection'
 import VisualizationSection from './sections/VisualizationSection'
 import './Home.css'
+import NeuralNetworkBackground from './sections/NeuralNetworkBackground'
 
 function Home() {
   const [message, setMessage] = useState<string>('Loading...')
@@ -48,6 +49,7 @@ function Home() {
     <div className="home">
       <HeroSection />
       <VisualizationSection />
+
 
       {/* Backend status - remove in production */}
       {showNotification && (

@@ -1,6 +1,7 @@
 .visualization {
   background: var(--color-brand-dark);
   padding: 6rem 0;
+  overflow: hidden;
 }
 
 .visualization-container {
@@ -35,6 +36,7 @@
 }
 
 .visualization-text h2 {
+  color: var(--text-on-brand);
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   font-weight: 600;

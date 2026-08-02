@@ -50,7 +50,7 @@
 }
 
 .navbar-logo-ml {
-  background: linear-gradient(to right, var(--color-accent), var(--color-accent-light));
+  background: linear-gradient(to right, var(--color-brand-accent), var(--color-brand-accent-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

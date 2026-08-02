@@ -4,6 +4,7 @@ import eve from '../../../../assets/eve.svg'
 import eveCheer from '../../../../assets/eve_cheer.svg'
 import FeatureCard from "../../../../components/FeatureCard";
 import './HeroSection.css'
+import FlowingGridBackground from '../Flowinggridbackground';
 import AutoSizeText from "../../../../components/AutoSizeText";
 import StyledButton from "../../../../components/Button";
 import { motion } from 'framer-motion'
@@ -20,6 +21,13 @@ function HeroSection() {
 
     return (
         <section className="hero">
+            {/* <FlowingGridBackground 
+       opacity={0.1}      // Optional: adjust visibility (0-1)
+        rows={20}          // Optional: number of rows
+        cols={50}          // Optional: number of columns
+        speed={0.01}       // Optional: animation speed
+         /> */}
+
             <motion.div
                 className="hero-wrapper"
                 variants={{
@@ -47,9 +55,10 @@ function HeroSection() {
                 >
                     <motion.div className="hero-content"
                         variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}>
-                        <p className="hero-subtitle">Welcome to the</p>
-                        <AutoSizeText boldText="Machine Learning" regularText="Playground" />
-                        {/* TODO: Make button component */}
+                        <div className="hero-header-text">
+                            <p className="hero-subtitle">Welcome to the</p>
+                            <AutoSizeText boldText="Machine Learning" regularText="Playground" />
+                        </div>
                         <StyledButton
                             variant="hero"
                             onMouseEnter={() => setRobotImage(eveCheer)}

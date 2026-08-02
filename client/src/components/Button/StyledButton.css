@@ -13,7 +13,7 @@
 
 .btn-hero {
     padding: 1rem 2rem;
-    background: linear-gradient(to right, var(--color-primary-30), var(--color-primary-light));
+    background: linear-gradient(to right, var(--color-brand), var(--color-brand-accent));
     color: white;
     border-color: #2563eb;
     font-size: 1.25rem;
@@ -24,7 +24,9 @@
 }
 
 .btn-hero:hover {
-    background: linear-gradient(to right, var(--color-primary-20), var(--color-primary-25));
+    transition: var(--transition-base);
+    background: var(--color-brand-accent);
+    /* background: linear-gradient(to right, var(--color-primary-20), var(--color-primary-25)); */
     box-shadow:
         0 6px 12px rgba(59, 130, 246, 0.3),
         inset 1px -1px 0 rgba(0, 0, 0, 0.3),
