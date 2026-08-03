@@ -67,6 +67,19 @@
     font-weight: 300;
 }
 
+.hero-intro {
+    max-width: 34rem;
+    margin-bottom: 1.75rem;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.hero-intro strong {
+    font-weight: 600;
+    color: var(--text-on-brand);
+}
+
 .hero-title-highlight {
     font-weight: 600;
     display: block;

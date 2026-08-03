@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../services/api'
-import Eve, { type EveMood } from '../../components/Eve'
+import { type EveMood } from '../../components/Eve'
+import { useEveSays } from './PlaygroundLayout'
 import Skeleton, { SkeletonText } from '../../components/Skeleton'
 import type { ExperimentSummary } from '../../types/api'
 import './Playground.css'
@@ -46,44 +47,40 @@ function Playground() {
         message = locked.eve_says ?? 'I have not learned that one yet.'
     }
 
+    useEveSays(mood, message)
+
     return (
-        <div className="gallery">
-            <aside className="gallery-eve">
-                <Eve mood={mood} message={message} bubblePlacement="below" size="lg" />
-            </aside>
+        <div className="gallery-main">
+            <h1 className="gallery-title">What would you like to find out?</h1>
 
-            <div className="gallery-main">
-                <h1 className="gallery-title">What would you like to find out?</h1>
-
-                <div className="question-cards">
-                    {experiments.length === 0 && !error &&
-                        Array.from({ length: PLACEHOLDER_CARDS }, (_, i) => (
-                            <div key={i} className="question-card is-placeholder">
-                                <Skeleton width="80%" height="1.4rem" />
-                                <SkeletonText lines={3} />
-                            </div>
-                        ))}
-
-                    {experiments.map((experiment) => (
-                        <button
-                            key={experiment.name}
-                            type="button"
-                            className={`question-card ${experiment.available ? '' : 'is-locked'}`}
-                            onClick={() =>
-                                experiment.available
-                                    ? navigate(`/playground/${experiment.name}`)
-                                    : setLocked(experiment)
-                            }
-                            aria-disabled={!experiment.available}
-                        >
-                            <span className="question-card-title">{experiment.question}</span>
-                            <span className="question-card-teaser">{experiment.teaser}</span>
-                            <span className="question-card-cue">
-                                {experiment.available ? 'Try it →' : 'Not ready yet'}
-                            </span>
-                        </button>
+            <div className="question-cards">
+                {experiments.length === 0 && !error &&
+                    Array.from({ length: PLACEHOLDER_CARDS }, (_, i) => (
+                        <div key={i} className="question-card is-placeholder">
+                            <Skeleton width="80%" height="1.4rem" />
+                            <SkeletonText lines={3} />
+                        </div>
                     ))}
-                </div>
+
+                {experiments.map((experiment) => (
+                    <button
+                        key={experiment.name}
+                        type="button"
+                        className={`question-card ${experiment.available ? '' : 'is-locked'}`}
+                        onClick={() =>
+                            experiment.available
+                                ? navigate(`/playground/${experiment.name}`)
+                                : setLocked(experiment)
+                        }
+                        aria-disabled={!experiment.available}
+                    >
+                        <span className="question-card-title">{experiment.question}</span>
+                        <span className="question-card-teaser">{experiment.teaser}</span>
+                        <span className="question-card-cue">
+                            {experiment.available ? 'Try it →' : 'Not ready yet'}
+                        </span>
+                    </button>
+                ))}
             </div>
         </div>
     )

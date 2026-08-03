@@ -1,20 +1,6 @@
 /* ===== Question gallery ===== */
-
-.gallery {
-    display: grid;
-    grid-template-columns: 17rem minmax(0, 1fr);
-    gap: var(--spacing-2xl);
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: var(--spacing-2xl) var(--spacing-lg);
-    align-items: start;
-}
-
-/* Eve stays put while the questions scroll past her */
-.gallery-eve {
-    position: sticky;
-    top: var(--spacing-2xl);
-}
+/* The page frame and Eve's rail live in PlaygroundLayout.css — this page is
+   only the column beside her. */
 
 .gallery-title {
     margin-bottom: var(--spacing-xl);
@@ -105,13 +91,3 @@
     font-style: italic;
 }
 
-@media (max-width: 860px) {
-    .gallery {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-lg);
-    }
-
-    .gallery-eve {
-        position: static;
-    }
-}
