@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect } from "react";
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import Playground from './pages/Playground';
+import PlaygroundLayout from './pages/Playground/PlaygroundLayout';
 import Experiment from './pages/Playground/Experiment';
 import WeAreUnpacking from './pages/WeAreUnpacking';
 import Footer from './components/Footer';
@@ -14,6 +15,9 @@ function App() {
   const lightPages = ['/playground', '/learn', '/about'];
 
   const isLight = lightPages.some((page) => location.pathname.startsWith(page));
+
+  // Everything under /playground is one section sharing one layout.
+  const section = location.pathname.startsWith('/playground') ? '/playground' : location.pathname;
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -37,12 +41,20 @@ function App() {
   return (
     <div className="app-shell">
       <Navbar isLight={isLight} />
-      {/* keyed on the path so each route fades in rather than swapping hard */}
-      <main className="app-main page-enter" key={location.pathname}>
+      {/*
+        Keyed so each route fades in rather than swapping hard — but keyed on
+        the *section*, not the exact path. Keying on the path remounted the
+        whole playground when you opened a question, which took Eve down with
+        it and made her blink. Inside /playground she now stays put and only
+        the column beside her changes.
+      */}
+      <main className="app-main page-enter" key={section}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/playground" element={<Playground />} />
-          <Route path="/playground/:name" element={<Experiment />} />
+          <Route element={<PlaygroundLayout />}>
+            <Route path="/playground" element={<Playground />} />
+            <Route path="/playground/:name" element={<Experiment />} />
+          </Route>
           <Route path="/learn" element={<WeAreUnpacking />} />
           <Route path="/about" element={<WeAreUnpacking />} />
         </Routes>

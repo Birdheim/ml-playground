@@ -1,21 +1,6 @@
 /* ===== One experiment, walked through in stages ===== */
-
-.experiment {
-    display: grid;
-    grid-template-columns: 17rem minmax(0, 1fr);
-    gap: var(--spacing-2xl);
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: var(--spacing-2xl) var(--spacing-lg);
-    align-items: start;
-}
-
-/* Eve is the guide, so she stays on screen the whole way down rather than
-   scrolling away with the page header. */
-.experiment-eve {
-    position: sticky;
-    top: var(--spacing-2xl);
-}
+/* The page frame and Eve's rail live in PlaygroundLayout.css — this page is
+   only the column beside her. */
 
 .back-link {
     display: inline-block;
@@ -437,15 +422,6 @@
 }
 
 @media (max-width: 860px) {
-    .experiment {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-lg);
-    }
-
-    .experiment-eve {
-        position: static;
-    }
-
     .stage {
         padding: var(--spacing-lg);
     }

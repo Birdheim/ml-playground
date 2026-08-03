@@ -1,76 +1,35 @@
 import { useEffect, useState } from 'react'
 import HeroSection from './sections/HeroSection'
 import HowItWorksSection from './sections/HowItWorksSection'
+import { api } from '../../services/api'
 import './Home.css'
 
 function Home() {
-  const [message, setMessage] = useState<string>('Loading...')
-  const [error, setError] = useState<string | null>(null)
-
-  const [showNotification, setShowNotification] = useState(true);
+  // Only failure is worth saying out loud. A green "backend is up and running"
+  // toast greeted every visitor on the front page, which is a developer's
+  // reassurance shown to an audience who has no idea what a backend is. The
+  // error is different: without it, a visitor whose server is down just sees
+  // the playground load placeholders forever with no explanation. It also no
+  // longer dismisses itself after four seconds, because a problem that
+  // disappears while you are still reading it is worse than no message at all.
+  const [isDown, setIsDown] = useState(false)
 
   useEffect(() => {
-    fetch('http://localhost:8000/')
-      .then(res => {
-        if (!res.ok) throw new Error('Backend not responding')
-        return res.json()
-      })
-      .then(data => setMessage(data.message))
-      .catch(err => setError(err.message))
+    let cancelled = false
+    api.healthCheck().catch(() => { if (!cancelled) setIsDown(true) })
+    return () => { cancelled = true }
   }, [])
-
-  useEffect(() => {
-    if (message || error) {
-      setShowNotification(true);
-      const timer = setTimeout(() => {
-        setShowNotification(false);
-      }, 4000); // Dismisses after 4 seconds
-
-      return () => clearTimeout(timer); // Cleanup
-    }
-  }, [message, error]);
-
-
-  const notificationStyle = {
-    position: 'fixed' as const,
-    bottom: '20px',
-    right: '20px',
-    padding: '12px 20px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-    fontSize: '14px',
-    fontWeight: '500',
-    zIndex: 9999,
-    animation: 'slideIn 0.3s ease-out',
-  };
 
   return (
     <div className="home">
       <HeroSection />
       <HowItWorksSection />
 
-
-      {/* Backend status - remove in production */}
-      {showNotification && (
-        error ? (
-          <div style={{
-            ...notificationStyle,
-            background: '#fee',
-            color: '#c33',
-            border: '1px solid #fcc',
-          }}>
-            ⚠️ Backend: {error}
-          </div>
-        ) : message && (
-          <div style={{
-            ...notificationStyle,
-            background: '#efe',
-            color: '#3a3',
-            border: '1px solid #cfc',
-          }}>
-            ✓ {message}
-          </div>
-        )
+      {isDown && (
+        <p className="home-offline" role="status">
+          Eve can't reach the server, so the playground won't run. If you're running
+          this yourself, start the backend on port 8000.
+        </p>
       )}
     </div>
   )

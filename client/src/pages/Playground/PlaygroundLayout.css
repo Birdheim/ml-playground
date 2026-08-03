@@ -1,0 +1,35 @@
+/* ===== Eve's rail, and the page beside her ===== */
+
+/* These sizes were on .gallery and .experiment separately. They live here now
+   because the rail is shared, and the two have to line up exactly — any
+   difference would show as Eve stepping sideways when you open a question. */
+.playground-layout {
+    display: grid;
+    grid-template-columns: 17rem minmax(0, 1fr);
+    gap: var(--spacing-2xl);
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    align-items: start;
+}
+
+/* Eve stays on screen the whole way down rather than scrolling away */
+.playground-eve {
+    position: sticky;
+    top: var(--spacing-2xl);
+}
+
+.playground-content {
+    min-width: 0;
+}
+
+@media (max-width: 860px) {
+    .playground-layout {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .playground-eve {
+        position: static;
+    }
+}

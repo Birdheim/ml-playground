@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../../services/api'
-import Eve, { type EveMood } from '../../components/Eve'
+import { type EveMood } from '../../components/Eve'
+import { useEveSays } from './PlaygroundLayout'
 import DecisionSurface from '../../components/DecisionSurface'
 import ModelDiagram from '../../components/ModelDiagram'
 import ResultDots from '../../components/ResultDots'
@@ -303,16 +304,15 @@ function Experiment() {
 
     const eve = eveState()
 
+    // Eve lives in the layout now, so every branch below just tells her what to
+    // say. She stays on screen and in place while this page loads and changes.
+    useEveSays(eve.mood, eve.message)
+
     if (error && !experiment) {
         return (
-            <div className="experiment">
-                <aside className="experiment-eve">
-                    <Eve mood="hiding" message={error} bubblePlacement="below" size="lg" />
-                </aside>
-                <main className="experiment-main">
-                    <Link to="/playground" className="back-link">← Back to the questions</Link>
-                </main>
-            </div>
+            <main className="experiment-main">
+                <Link to="/playground" className="back-link">← Back to the questions</Link>
+            </main>
         )
     }
 
@@ -322,20 +322,15 @@ function Experiment() {
     // layout is already close to right before anything loads.
     if (!experiment || !preview) {
         return (
-            <div className="experiment">
-                <aside className="experiment-eve">
-                    <Eve mood="neutral" message="One moment…" bubblePlacement="below" size="lg" />
-                </aside>
-                <main className="experiment-main">
-                    <Link to="/playground" className="back-link">← Back to the questions</Link>
-                    <Skeleton width="60%" height="2.25rem" className="experiment-title-skeleton" />
-                    <section className="stage">
-                        <SkeletonText lines={2} />
-                        <Skeleton shape="block" height="12rem" className="stage-skeleton-table" />
-                        <Skeleton shape="block" width="10rem" height="2.75rem" />
-                    </section>
-                </main>
-            </div>
+            <main className="experiment-main">
+                <Link to="/playground" className="back-link">← Back to the questions</Link>
+                <Skeleton width="60%" height="2.25rem" className="experiment-title-skeleton" />
+                <section className="stage">
+                    <SkeletonText lines={2} />
+                    <Skeleton shape="block" height="12rem" className="stage-skeleton-table" />
+                    <Skeleton shape="block" width="10rem" height="2.75rem" />
+                </section>
+            </main>
         )
     }
 
@@ -370,237 +365,231 @@ function Experiment() {
     )
 
     return (
-        <div className="experiment">
-            <aside className="experiment-eve">
-                <Eve mood={eve.mood} message={eve.message} bubblePlacement="below" size="lg" />
-            </aside>
+    <main className="experiment-main">
+        <Link to="/playground" className="back-link">← Back to the questions</Link>
+        <h1 className="experiment-question">{experiment.question}</h1>
 
-            <main className="experiment-main">
-                <Link to="/playground" className="back-link">← Back to the questions</Link>
-                <h1 className="experiment-question">{experiment.question}</h1>
+            {/* ---- Stage 1: look at the data ---- */}
+            {stage === 'intro' && (
+                <section className="stage">
+                    <p className="stage-lead">{experiment.teaser}</p>
 
-                {/* ---- Stage 1: look at the data ---- */}
-                {stage === 'intro' && (
-                    <section className="stage">
-                        <p className="stage-lead">{experiment.teaser}</p>
+                    {sampleTable}
 
+                    <p className="stage-note">
+                        The last column is the answer. For {nTrain} of them the computer gets
+                        to see it; for the other {nTest} it stays hidden, and we find out
+                        whether the computer can work it out on its own.
+                    </p>
+
+                    <StyledButton onClick={() => { setGuess(Math.round(nTest * 0.7)); setStage('guess') }}>
+                        I've had a look →
+                    </StyledButton>
+                </section>
+            )}
+
+            {/* ---- Stage 2: commit to a guess ---- */}
+            {stage === 'guess' && (
+                <section className="stage">
+                    <p className="stage-lead">
+                        Before we run it — what's your hunch? Committing to a number makes the
+                        answer stick a lot better than just watching.
+                    </p>
+
+                    <div className="guess-box">
+                        <p className="guess-value">
+                            <strong>{guess}</strong>
+                            <span className="guess-of"> of {nTest}</span>
+                        </p>
+                        <input
+                            className="guess-slider"
+                            type="range"
+                            min={0}
+                            max={nTest}
+                            value={guess ?? 0}
+                            onChange={(e) => setGuess(Number(e.target.value))}
+                            aria-label={`How many of ${nTest} will it get right`}
+                        />
+                        <div className="guess-scale">
+                            <span>none of them</span>
+                            <span>every one</span>
+                        </div>
+                    </div>
+
+                    {/* the data is what the guess is about, so it stays one
+                        click away rather than being replaced by the slider */}
+                    <details className="recall">
+                        <summary className="recall-summary">Show me the data again</summary>
                         {sampleTable}
+                    </details>
 
-                        <p className="stage-note">
-                            The last column is the answer. For {nTrain} of them the computer gets
-                            to see it; for the other {nTest} it stays hidden, and we find out
-                            whether the computer can work it out on its own.
+                    <StyledButton onClick={() => runTraining('result')} disabled={isTraining}>
+                        {isTraining ? 'Training…' : 'Lock it in and run →'}
+                    </StyledButton>
+                </section>
+            )}
+
+            {/* ---- Stage 3 & 4: the result, then the controls ---- */}
+            {(stage === 'result' || stage === 'tinker') && latest && (
+                <section className="stage">
+                    <div className="scoreline" ref={scoreRef}>
+                        <p className="score">
+                            <strong>{latest.result.n_correct}</strong>
+                            <span className="score-of"> of {latest.result.n_test}</span>
                         </p>
-
-                        <StyledButton onClick={() => { setGuess(Math.round(nTest * 0.7)); setStage('guess') }}>
-                            I've had a look →
-                        </StyledButton>
-                    </section>
-                )}
-
-                {/* ---- Stage 2: commit to a guess ---- */}
-                {stage === 'guess' && (
-                    <section className="stage">
-                        <p className="stage-lead">
-                            Before we run it — what's your hunch? Committing to a number makes the
-                            answer stick a lot better than just watching.
+                        <p className="score-caption">
+                            correct, on {plural(rowLabel)} it had never seen
+                            {previous ? (
+                                <span className="score-guess">
+                                    {latest.modelLabel}, last time {previous.result.n_correct}
+                                </span>
+                            ) : (
+                                guess !== null && <span className="score-guess">you guessed {guess}</span>
+                            )}
                         </p>
+                    </div>
 
-                        <div className="guess-box">
-                            <p className="guess-value">
-                                <strong>{guess}</strong>
-                                <span className="guess-of"> of {nTest}</span>
-                            </p>
-                            <input
-                                className="guess-slider"
-                                type="range"
-                                min={0}
-                                max={nTest}
-                                value={guess ?? 0}
-                                onChange={(e) => setGuess(Number(e.target.value))}
-                                aria-label={`How many of ${nTest} will it get right`}
-                            />
-                            <div className="guess-scale">
-                                <span>none of them</span>
-                                <span>every one</span>
-                            </div>
-                        </div>
+                    <ResultDots outcomes={latest.result.outcomes} rowLabel={rowLabel} />
 
-                        {/* the data is what the guess is about, so it stays one
-                            click away rather than being replaced by the slider */}
-                        <details className="recall">
-                            <summary className="recall-summary">Show me the data again</summary>
-                            {sampleTable}
-                        </details>
+                    {/* "beat that" only means something if "that" is still on
+                        screen, so every attempt stays listed */}
+                    {runs.length > 1 && (
+                        <table className="run-history">
+                            <caption className="run-history-caption">Every attempt so far</caption>
+                            <tbody>
+                                {runs.map((run, i) => (
+                                    <tr key={i} className={i === runs.length - 1 ? 'is-latest' : ''}>
+                                        <td className="run-history-n">{i + 1}</td>
+                                        <td className="run-history-model">{run.modelLabel}</td>
+                                        <td className="run-history-score">
+                                            {run.result.n_correct} of {run.result.n_test}
+                                        </td>
+                                        <td className="run-history-delta">
+                                            {i === 0
+                                                ? ''
+                                                : formatDelta(run.result.n_correct - runs[i - 1].result.n_correct)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
 
-                        <StyledButton onClick={() => runTraining('result')} disabled={isTraining}>
-                            {isTraining ? 'Training…' : 'Lock it in and run →'}
-                        </StyledButton>
-                    </section>
-                )}
-
-                {/* ---- Stage 3 & 4: the result, then the controls ---- */}
-                {(stage === 'result' || stage === 'tinker') && latest && (
-                    <section className="stage">
-                        <div className="scoreline" ref={scoreRef}>
-                            <p className="score">
-                                <strong>{latest.result.n_correct}</strong>
-                                <span className="score-of"> of {latest.result.n_test}</span>
-                            </p>
-                            <p className="score-caption">
-                                correct, on {plural(rowLabel)} it had never seen
-                                {previous ? (
-                                    <span className="score-guess">
-                                        {latest.modelLabel}, last time {previous.result.n_correct}
-                                    </span>
-                                ) : (
-                                    guess !== null && <span className="score-guess">you guessed {guess}</span>
-                                )}
-                            </p>
-                        </div>
-
-                        <ResultDots outcomes={latest.result.outcomes} rowLabel={rowLabel} />
-
-                        {/* "beat that" only means something if "that" is still on
-                            screen, so every attempt stays listed */}
-                        {runs.length > 1 && (
-                            <table className="run-history">
-                                <caption className="run-history-caption">Every attempt so far</caption>
-                                <tbody>
-                                    {runs.map((run, i) => (
-                                        <tr key={i} className={i === runs.length - 1 ? 'is-latest' : ''}>
-                                            <td className="run-history-n">{i + 1}</td>
-                                            <td className="run-history-model">{run.modelLabel}</td>
-                                            <td className="run-history-score">
-                                                {run.result.n_correct} of {run.result.n_test}
-                                            </td>
-                                            <td className="run-history-delta">
-                                                {i === 0
-                                                    ? ''
-                                                    : formatDelta(run.result.n_correct - runs[i - 1].result.n_correct)}
-                                            </td>
+                    {latest.result.mistakes.length > 0 && (
+                        <>
+                            <h2 className="mistakes-title">
+                                {latest.result.n_mistakes === 1
+                                    ? `The one ${rowLabel} it got wrong`
+                                    : `Where it went wrong${
+                                          latest.result.n_mistakes > latest.result.mistakes.length
+                                              ? ` — ${latest.result.mistakes.length} of ${latest.result.n_mistakes}`
+                                              : ''
+                                      }`}
+                            </h2>
+                            <div className="sample-scroll">
+                                <table className="sample-table">
+                                    <thead>
+                                        <tr>
+                                            <th>It guessed</th>
+                                            <th>Really was</th>
+                                            {Object.keys(latest.result.mistakes[0].features).map((f) => (
+                                                <th key={f}>{label(f)}</th>
+                                            ))}
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-
-                        {latest.result.mistakes.length > 0 && (
-                            <>
-                                <h2 className="mistakes-title">
-                                    {latest.result.n_mistakes === 1
-                                        ? `The one ${rowLabel} it got wrong`
-                                        : `Where it went wrong${
-                                              latest.result.n_mistakes > latest.result.mistakes.length
-                                                  ? ` — ${latest.result.mistakes.length} of ${latest.result.n_mistakes}`
-                                                  : ''
-                                          }`}
-                                </h2>
-                                <div className="sample-scroll">
-                                    <table className="sample-table">
-                                        <thead>
-                                            <tr>
-                                                <th>It guessed</th>
-                                                <th>Really was</th>
-                                                {Object.keys(latest.result.mistakes[0].features).map((f) => (
-                                                    <th key={f}>{label(f)}</th>
+                                    </thead>
+                                    <tbody>
+                                        {latest.result.mistakes.map((mistake, i) => (
+                                            <tr key={i}>
+                                                <td className="guessed">{mistake.predicted}</td>
+                                                <td className="actual">{mistake.actual}</td>
+                                                {Object.entries(mistake.features).map(([c, v]) => (
+                                                    <td key={c}>{displayValue(c, v)}</td>
                                                 ))}
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            {latest.result.mistakes.map((mistake, i) => (
-                                                <tr key={i}>
-                                                    <td className="guessed">{mistake.predicted}</td>
-                                                    <td className="actual">{mistake.actual}</td>
-                                                    {Object.entries(mistake.features).map(([c, v]) => (
-                                                        <td key={c}>{displayValue(c, v)}</td>
-                                                    ))}
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </>
-                        )}
-
-                        {stage === 'result' && (
-                            <StyledButton onClick={() => setStage('tinker')}>
-                                Let me try to beat that →
-                            </StyledButton>
-                        )}
-                    </section>
-                )}
-
-                {/* ---- Stage 4 only: the controls, finally ---- */}
-                {stage === 'tinker' && (
-                    <section className="stage">
-                        <h2 className="stage-title">Change how it thinks</h2>
-
-                        <div className="model-cards">
-                            {models.map((model) => (
-                                <button
-                                    key={model.name}
-                                    type="button"
-                                    className={`model-card ${model.name === modelName ? 'is-selected' : ''}`}
-                                    onClick={() => handleModelChange(model.name)}
-                                >
-                                    <ModelDiagram model={model.name} />
-                                    <span className="model-card-label">{model.label}</span>
-                                </button>
-                            ))}
-                        </div>
-
-                        {selectedModel && <p className="model-blurb">{selectedModel.blurb}</p>}
-
-                        {/* sits between the model cards and the settings, so both
-                            of the things that change it are next to what changed */}
-                        {surface ? (
-                            <DecisionSurface
-                                surface={surface}
-                                labelFor={label}
-                                onAxisChange={handleAxisChange}
-                                isLoading={isDrawing}
-                            />
-                        ) : (
-                            // Shaped part for part against the real component —
-                            // legend, plot, axis pickers, caption — because a
-                            // placeholder that is merely present but the wrong
-                            // height still shoves the settings down when the
-                            // picture lands. Measured at 688px against its 700.
-                            <div className="surface-placeholder">
-                                <Skeleton width="12rem" className="surface-placeholder-legend" />
-                                <Skeleton shape="block" className="surface-placeholder-plot" />
-                                <Skeleton shape="block" className="surface-placeholder-axes" />
-                                <div className="surface-placeholder-caption">
-                                    <SkeletonText lines={5} />
-                                </div>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
-                        )}
+                        </>
+                    )}
 
-                        {selectedModel && (
-                            <>
-                                {selectedModel.params.map((param) => (
-                                    <ParamControl
-                                        key={param.name}
-                                        param={param}
-                                        value={params[param.name] ?? param.default}
-                                        onChange={(value) =>
-                                            setParams((current) => ({ ...current, [param.name]: value }))
-                                        }
-                                    />
-                                ))}
-                            </>
-                        )}
-
-                        {error && <p className="stage-error">{error}</p>}
-
-                        <StyledButton onClick={() => runTraining('tinker')} disabled={isTraining}>
-                            {isTraining ? 'Training…' : 'Run it again →'}
+                    {stage === 'result' && (
+                        <StyledButton onClick={() => setStage('tinker')}>
+                            Let me try to beat that →
                         </StyledButton>
-                    </section>
-                )}
-            </main>
-        </div>
+                    )}
+                </section>
+            )}
+
+            {/* ---- Stage 4 only: the controls, finally ---- */}
+            {stage === 'tinker' && (
+                <section className="stage">
+                    <h2 className="stage-title">Change how it thinks</h2>
+
+                    <div className="model-cards">
+                        {models.map((model) => (
+                            <button
+                                key={model.name}
+                                type="button"
+                                className={`model-card ${model.name === modelName ? 'is-selected' : ''}`}
+                                onClick={() => handleModelChange(model.name)}
+                            >
+                                <ModelDiagram model={model.name} />
+                                <span className="model-card-label">{model.label}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    {selectedModel && <p className="model-blurb">{selectedModel.blurb}</p>}
+
+                    {/* sits between the model cards and the settings, so both
+                        of the things that change it are next to what changed */}
+                    {surface ? (
+                        <DecisionSurface
+                            surface={surface}
+                            labelFor={label}
+                            onAxisChange={handleAxisChange}
+                            isLoading={isDrawing}
+                        />
+                    ) : (
+                        // Shaped part for part against the real component —
+                        // legend, plot, axis pickers, caption — because a
+                        // placeholder that is merely present but the wrong
+                        // height still shoves the settings down when the
+                        // picture lands. Measured at 688px against its 700.
+                        <div className="surface-placeholder">
+                            <Skeleton width="12rem" className="surface-placeholder-legend" />
+                            <Skeleton shape="block" className="surface-placeholder-plot" />
+                            <Skeleton shape="block" className="surface-placeholder-axes" />
+                            <div className="surface-placeholder-caption">
+                                <SkeletonText lines={5} />
+                            </div>
+                        </div>
+                    )}
+
+                    {selectedModel && (
+                        <>
+                            {selectedModel.params.map((param) => (
+                                <ParamControl
+                                    key={param.name}
+                                    param={param}
+                                    value={params[param.name] ?? param.default}
+                                    onChange={(value) =>
+                                        setParams((current) => ({ ...current, [param.name]: value }))
+                                    }
+                                />
+                            ))}
+                        </>
+                    )}
+
+                    {error && <p className="stage-error">{error}</p>}
+
+                    <StyledButton onClick={() => runTraining('tinker')} disabled={isTraining}>
+                        {isTraining ? 'Training…' : 'Run it again →'}
+                    </StyledButton>
+                </section>
+            )}
+        </main>
     )
 }
 

@@ -50,6 +50,16 @@ function HeroSection() {
                             <p className="hero-subtitle">Welcome to the</p>
                             <AutoSizeText boldText="Machine Learning" regularText="Playground" />
                         </div>
+                        {/* Eve is introduced in the copy rather than in a speech
+                            bubble: a bubble here was a slab of blue wider than
+                            she is, and it dominated the page it was meant to
+                            welcome you to. She does the talking from the
+                            playground onwards, where there is something to
+                            talk about. */}
+                        <p className="hero-intro">
+                            This is <strong>Eve</strong>. She'll walk you through it — no maths,
+                            no code, and you get to guess before the computer does.
+                        </p>
                         <StyledButton
                             variant="hero"
                             onMouseEnter={() => setMood('happy')}
@@ -59,9 +69,8 @@ function HeroSection() {
                             Go to Playground →
                         </StyledButton>
                     </motion.div>
-                    {/* the same Eve component the playground uses, so she
-                        arrives already introduced rather than turning out to
-                        have a voice only after you click through */}
+                    {/* the same Eve component the playground uses, so it is
+                        recognisably the same character either side of the click */}
                     <motion.div className="hero-image"
                         onMouseEnter={() => setMood('happy')}
                         onMouseLeave={() => setMood('neutral')}
@@ -74,12 +83,7 @@ function HeroSection() {
                             }
                         }}
                     >
-                        <Eve
-                            mood={mood}
-                            size="lg"
-                            bubblePlacement="below"
-                            message="Hi, I'm Eve. Pick something you're curious about and we'll find out together whether a computer can work it out — you get to guess first."
-                        />
+                        <Eve mood={mood} size="lg" />
                     </motion.div>
                 </motion.div>
 
