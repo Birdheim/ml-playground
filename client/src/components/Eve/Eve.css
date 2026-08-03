@@ -36,6 +36,11 @@
     /* nudge the bubble down to sit level with Eve's head rather than her antenna */
     margin-top: 12%;
     max-width: 15rem;
+    /* Her lines run from one to five, and the bubble was measured swinging
+       between 37px and 121px as she talked — which moved everything under her
+       on narrow screens and made the sticky rail twitch on wide ones. Three
+       lines' worth of floor absorbs most of that; longer lines still grow. */
+    min-height: 5.5rem;
     padding: var(--spacing-md);
     border-radius: var(--radius-md);
     background-color: var(--color-accent-dark);

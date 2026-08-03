@@ -2,8 +2,16 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../services/api'
 import Eve, { type EveMood } from '../../components/Eve'
+import Skeleton, { SkeletonText } from '../../components/Skeleton'
 import type { ExperimentSummary } from '../../types/api'
 import './Playground.css'
+
+/**
+ * How many placeholder cards to show while the catalogue loads. Matching the
+ * real count keeps the page the right height from the first paint, so nothing
+ * below it moves when the questions arrive.
+ */
+const PLACEHOLDER_CARDS = 6
 
 /**
  * The gallery of questions.
@@ -48,6 +56,14 @@ function Playground() {
                 <h1 className="gallery-title">What would you like to find out?</h1>
 
                 <div className="question-cards">
+                    {experiments.length === 0 && !error &&
+                        Array.from({ length: PLACEHOLDER_CARDS }, (_, i) => (
+                            <div key={i} className="question-card is-placeholder">
+                                <Skeleton width="80%" height="1.4rem" />
+                                <SkeletonText lines={3} />
+                            </div>
+                        ))}
+
                     {experiments.map((experiment) => (
                         <button
                             key={experiment.name}

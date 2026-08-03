@@ -1,0 +1,41 @@
+/* ===== Loading placeholders ===== */
+
+.skeleton {
+    display: block;
+    /* a tint of the page rather than a grey, so it reads as "this surface is
+       still filling in" instead of as a broken image */
+    background-color: var(--color-primary);
+    opacity: 0.12;
+    border-radius: var(--radius-sm);
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.skeleton-text {
+    height: 0.85rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-block {
+    border-radius: var(--radius-md);
+}
+
+.skeleton-lines {
+    display: block;
+}
+
+.skeleton-lines .skeleton:last-child {
+    margin-bottom: 0;
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 0.12; }
+    50% { opacity: 0.22; }
+}
+
+/* A pulsing block is exactly the kind of movement this setting asks us to stop.
+   The placeholder still holds the space, it just sits still. */
+@media (prefers-reduced-motion: reduce) {
+    .skeleton {
+        animation: none;
+    }
+}
