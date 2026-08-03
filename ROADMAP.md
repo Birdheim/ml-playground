@@ -294,11 +294,55 @@ Building the Playground surfaced gaps in the in-progress colour refactor:
   white text, which is hard to read, and the bubble is where the teaching
   happens.
 
+## Seeing the method, not just the score
+
+**Decision: every model gets its decision boundary drawn.**
+`POST /decision-surface` fits the chosen model on two columns and predicts
+across a 120×120 grid; the frontend blits that to a canvas and draws the real
+data over it. It sits in the tinker stage between the model cards and the
+settings, and redraws live — swapping a tree for KNN turns rectangles into
+islands in front of you.
+
+This is the answer to "the four models all look the same to me". Their scores
+on Titanic sit within a few points of each other, so the numbers say the choice
+barely matters; the pictures say the opposite, and the pictures are the lesson.
+
+Three things this forced, all of which are the interesting part:
+
+- **No smoothing when scaling up.** A tree's boundary really is a hard-edged
+  staircase. Interpolating it into a gradient draws a model that does not exist,
+  so the canvas is `image-rendering: pixelated` and the resolution carries the
+  crispness instead.
+- **The axes are chosen for you.** A quick tree ranks the columns by importance
+  and the best two are used. Asking a newcomer to pick two axes before they have
+  seen anything is the control-panel mistake again, one layer down. They stay
+  changeable, they are just never a gate.
+- **The camera is not the data.** Scaled to Titanic's true maximum fare (£512,
+  against a £16 median) nine tenths of the passengers sat in the bottom sixth of
+  the plot. The view is now cut at Tukey's fence, held back so it never hides
+  more than the outermost 5%; points outside are pinned to the edge and counted
+  in the caption, never dropped. The model still trains on every row.
+
+**The two-column model is a different model, and the UI says so.** It sees two
+things about each passenger instead of six, and scores lower — 85 of 143 on age
+and fare against 103 with everything. The caption states this outright rather
+than letting the picture imply it re-runs the experiment.
+
+**Colour:** the first three slots of a CVD-validated categorical palette, in
+fixed order, checked against this site's own card surfaces in both themes on the
+all-pairs gate (worst CVD ΔE 9.2 light / 9.4 dark). Three is the cap for a
+scatter, which happens to be the most classes any dataset here has — a fourth
+class needs a re-validated palette, not a fourth guessed hue. The legend names
+every class, so identity never rests on colour alone.
+
+**Not built: 3D.** A third axis needs WebGL and a rotation interaction, and it
+buys less than it looks — the honest gain over two well-chosen columns is small,
+and the cost is a dependency plus a control that a first-time visitor has to
+learn before the picture means anything. Worth revisiting only if two columns
+start feeling genuinely insufficient.
+
 ## Known issues
 
-- `npm run build` fails on unused-import TypeScript errors in the hero
-  background components (dev server is unaffected, so this only bites at
-  deploy time).
 - `--color-text-tertiary` gives about 4.07:1 on light panels, marginally under
   the 4.5:1 minimum for small text. It is used site-wide, so changing it is a
   design decision rather than a fix to make in passing.
@@ -306,3 +350,11 @@ Building the Playground surfaced gaps in the in-progress colour refactor:
 - `Flowinggridbackground.tsx` and `NeuralNetworkBackground.tsx` are written but
   unused — the hero has its background commented out.
 - CORS is `allow_origins=["*"]`, fine locally, needs narrowing before deploy.
+- `/learn` and `/about` both render the same "Eve is still unpacking" box, so
+  two of the three nav links are dead ends. `MovingBox.png` behind it is 2MB,
+  and is a screenshot of Figma component placeholders — it reads as unfinished
+  rather than as coming soon.
+- The footer's LinkedIn and GitHub are plain text, not links.
+- `Home.tsx` still shows the "backend is up and running" toast to every visitor.
+  It is marked "remove in production" in the code; worth doing before sharing
+  the link, since it is developer noise on a page aimed at family.
