@@ -1,5 +1,7 @@
 import type {
   DatasetPreviewResponse,
+  DecisionSurfaceRequest,
+  DecisionSurfaceResponse,
   ExperimentDetail,
   ListDatasetsResponse,
   ListExperimentsResponse,
@@ -138,6 +140,27 @@ export const api = {
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.detail || 'Training failed')
+    }
+    return response.json()
+  },
+
+  /**
+   * Map what a model predicts across two columns, so the method can be drawn
+   * rather than only scored.
+   * @param request - Same as training, plus the two axes (optional)
+   */
+  async decisionSurface(request: DecisionSurfaceRequest): Promise<DecisionSurfaceResponse> {
+    const response = await fetch(`${BASE_URL}/decision-surface`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(request)
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Could not draw the decision surface')
     }
     return response.json()
   },

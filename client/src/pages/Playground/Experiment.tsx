@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../../services/api'
 import Eve, { type EveMood } from '../../components/Eve'
+import DecisionSurface from '../../components/DecisionSurface'
 import ModelDiagram from '../../components/ModelDiagram'
 import ResultDots from '../../components/ResultDots'
 import StyledButton from '../../components/Button'
 import type {
     DatasetPreviewResponse,
+    DecisionSurfaceResponse,
     ExperimentDetail,
     Hyperparameters,
     ModelInfo,
@@ -56,6 +58,14 @@ function plural(word: string): string {
     return word.endsWith('s') ? word : `${word}s`
 }
 
+/**
+ * How long to sit on a settings change before redrawing the picture.
+ *
+ * Dragging a slider fires continuously; without this every intermediate value
+ * would become a request. Short enough that letting go feels immediate.
+ */
+const SURFACE_DEBOUNCE_MS = 250
+
 function Experiment() {
     const { name = '' } = useParams()
 
@@ -69,6 +79,13 @@ function Experiment() {
     const [stage, setStage] = useState<Stage>('intro')
     const [isTraining, setIsTraining] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
+    const [surface, setSurface] = useState<DecisionSurfaceResponse | null>(null)
+    const [isDrawing, setIsDrawing] = useState(false)
+    // Undefined until the backend has picked for us; kept across model changes
+    // so switching from a tree to KNN redraws the same two columns and the
+    // comparison is honest.
+    const [axes, setAxes] = useState<{ x?: string; y?: string }>({})
 
     const scoreRef = useRef<HTMLDivElement>(null)
 
@@ -118,6 +135,47 @@ function Experiment() {
         }
     }, [runs.length])
 
+    // The picture follows the settings live rather than waiting for "Run it
+    // again" — swapping a tree for KNN and watching the boundary go from
+    // rectangles to islands is the fastest way to see that the models differ,
+    // and making someone press a button first breaks the connection.
+    useEffect(() => {
+        if (stage !== 'tinker' || !experiment || !modelName) return
+
+        let cancelled = false
+        setIsDrawing(true)
+
+        const timer = setTimeout(() => {
+            api.decisionSurface({
+                model_name: modelName,
+                dataset_name: experiment.dataset,
+                hyperparameters: params,
+                x_column: axes.x,
+                y_column: axes.y,
+            })
+                .then((response) => {
+                    if (cancelled) return
+                    setSurface(response)
+                    // Same reference when nothing moved, so adopting the
+                    // backend's automatic choice doesn't re-trigger this effect
+                    setAxes((current) =>
+                        current.x === response.x_column && current.y === response.y_column
+                            ? current
+                            : { x: response.x_column, y: response.y_column }
+                    )
+                })
+                // A failed drawing is not worth interrupting the page for: the
+                // score is the result, this is the illustration beside it.
+                .catch(() => { if (!cancelled) setSurface(null) })
+                .finally(() => { if (!cancelled) setIsDrawing(false) })
+        }, SURFACE_DEBOUNCE_MS)
+
+        return () => {
+            cancelled = true
+            clearTimeout(timer)
+        }
+    }, [stage, experiment, modelName, params, axes.x, axes.y])
+
     const nTest = preview ? testSetSize(preview.n_samples) : 0
     const nTrain = preview ? preview.n_samples - nTest : 0
     const rowLabel = experiment?.row_label ?? 'example'
@@ -148,6 +206,10 @@ function Experiment() {
         setModelName(next)
         const model = models.find((m) => m.name === next)
         if (model) setParams(defaultParams(model))
+    }
+
+    function handleAxisChange(axis: 'x' | 'y', column: string) {
+        setAxes((current) => ({ ...current, [axis]: column }))
     }
 
     function label(column: string): string {
@@ -475,9 +537,21 @@ function Experiment() {
                             ))}
                         </div>
 
+                        {selectedModel && <p className="model-blurb">{selectedModel.blurb}</p>}
+
+                        {/* sits between the model cards and the settings, so both
+                            of the things that change it are next to what changed */}
+                        {surface && (
+                            <DecisionSurface
+                                surface={surface}
+                                labelFor={label}
+                                onAxisChange={handleAxisChange}
+                                isLoading={isDrawing}
+                            />
+                        )}
+
                         {selectedModel && (
                             <>
-                                <p className="model-blurb">{selectedModel.blurb}</p>
                                 {selectedModel.params.map((param) => (
                                     <ParamControl
                                         key={param.name}

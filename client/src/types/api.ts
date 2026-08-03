@@ -102,6 +102,45 @@ export interface Mistake {
   actual: string;
 }
 
+// Decision Surface Types
+// What the model decided across two columns, so the *method* is visible rather
+// than only its score. See backend/services/decision_surface.py — the model
+// behind this picture sees only two columns, so it scores lower than the one in
+// the main result, and the UI has to say so.
+
+export interface SurfacePoint {
+  x: number;
+  y: number;
+  /** True class id, indexing into class_names. */
+  c: number;
+}
+
+export interface DecisionSurfaceRequest extends TrainRequest {
+  /** Omit both to let the backend pick the two most informative columns. */
+  x_column?: string;
+  y_column?: string;
+}
+
+export interface DecisionSurfaceResponse {
+  x_column: string;
+  y_column: string;
+  /** Every column that can be put on an axis. */
+  columns: string[];
+  x_min: number;
+  x_max: number;
+  y_min: number;
+  y_max: number;
+  resolution: number;
+  /** resolution x resolution predicted class ids, row 0 at y_max. */
+  grid: number[][];
+  points: SurfacePoint[];
+  /** How many points sat outside the view and were pinned to its edge. */
+  n_clipped: number;
+  class_names: string[];
+  n_correct: number;
+  n_test: number;
+}
+
 export interface TrainResponse {
   accuracy: number;
   n_correct: number;
