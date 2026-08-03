@@ -16,9 +16,6 @@ function App() {
 
   const isLight = lightPages.some((page) => location.pathname.startsWith(page));
 
-  // Everything under /playground is one section sharing one layout.
-  const section = location.pathname.startsWith('/playground') ? '/playground' : location.pathname;
-
   useEffect(() => {
     if (location.pathname === "/") {
       document.body.classList.add("landing");
@@ -42,13 +39,13 @@ function App() {
     <div className="app-shell">
       <Navbar isLight={isLight} />
       {/*
-        Keyed so each route fades in rather than swapping hard — but keyed on
-        the *section*, not the exact path. Keying on the path remounted the
-        whole playground when you opened a question, which took Eve down with
-        it and made her blink. Inside /playground she now stays put and only
-        the column beside her changes.
+        No fade at this level, deliberately. Fading the whole main area meant
+        Eve faded in from invisible on every navigation, which is what "Eve
+        keeps reloading" was: she is inside this element, so a fade here is a
+        fade of her. Each page now runs its own entrance below, and the
+        playground fades only the column beside her, so she never blinks.
       */}
-      <main className="app-main page-enter" key={section}>
+      <main className="app-main">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route element={<PlaygroundLayout />}>
