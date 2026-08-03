@@ -1,0 +1,115 @@
+/* ===== What the model decided, drawn ===== */
+
+.surface {
+    margin: var(--spacing-lg) 0 var(--spacing-xl);
+}
+
+.surface.is-loading {
+    opacity: 0.55;
+    /* dim rather than blank: swapping a model should read as the same picture
+       changing, not as the picture disappearing and a new one arriving */
+    transition: opacity var(--transition-base);
+}
+
+/* ===== Legend ===== */
+
+.surface-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    list-style: none;
+}
+
+.surface-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    /* the swatch beside it carries identity; the text stays ink, so a class
+       name never sits in a colour that may be sub-3:1 on this surface */
+    color: var(--color-text-secondary);
+}
+
+.surface-swatch {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: var(--radius-sm);
+}
+
+/* ===== The plot ===== */
+
+.surface-plot {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    width: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.surface-regions {
+    width: 100%;
+    height: 100%;
+    /* a decision tree's boundary really is a hard staircase — smoothing it into
+       a gradient would draw a model that does not exist */
+    image-rendering: pixelated;
+}
+
+.surface-point {
+    position: absolute;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-full);
+    /* a ring in the surface colour keeps overlapping points countable */
+    box-shadow: 0 0 0 1.5px var(--card-background);
+    transform: translate(-50%, 50%);
+    pointer-events: none;
+}
+
+/* ===== Axes ===== */
+
+.surface-axis-values {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-tertiary);
+}
+
+.surface-axes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.surface-axis {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.surface-axis-name {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--color-text-primary);
+}
+
+.surface-caption {
+    margin-top: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+.surface-caption strong {
+    color: var(--color-text-primary);
+}
+
+@media (max-width: 860px) {
+    .surface-plot {
+        aspect-ratio: 1 / 1;
+    }
+}

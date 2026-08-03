@@ -7,12 +7,16 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-container">
+        {/* Two of these three were listed flat alongside classification, which
+            promised a visitor two whole capabilities that do not exist. Marked
+            the same way the locked cards in the gallery are, so the site says
+            one thing about what is built. */}
         <div className="footer-section">
           <h3>ML Models</h3>
           <ul>
-            <li>Regression</li>
             <li>Classification</li>
-            <li>Neural Nets</li>
+            <li className="footer-unbuilt">Regression <span>— not yet</span></li>
+            <li className="footer-unbuilt">Neural Nets <span>— not yet</span></li>
           </ul>
         </div>
         <div className='footer-section-middel'>

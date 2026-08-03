@@ -1,0 +1,58 @@
+/* ===== The result, as a picture ===== */
+
+.result-dots {
+    margin: var(--spacing-lg) 0 var(--spacing-xl);
+}
+
+.result-dots-grid {
+    display: flex;
+    flex-wrap: wrap;
+    /* a fixed gap rather than space-between: the last row is always short, and
+       justified rows would make it read as a different-sized group */
+    gap: 0.3rem;
+}
+
+.result-dot {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: var(--radius-sm);
+    animation: dot-in var(--transition-base) ease-out backwards;
+}
+
+.result-dot.is-correct {
+    background-color: var(--color-success);
+}
+
+.result-dot.is-wrong {
+    background-color: var(--color-error);
+}
+
+.result-dots-caption {
+    margin-top: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+.result-dots-key.is-wrong {
+    font-weight: 600;
+    color: var(--color-error);
+}
+
+@keyframes dot-in {
+    from {
+        opacity: 0;
+        transform: scale(0.4);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .result-dot {
+        animation: none;
+    }
+}

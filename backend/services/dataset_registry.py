@@ -33,11 +33,17 @@ class DatasetRegistry:
                 data = BUILTIN_DATASETS[name]()
                 if raw:
                     return data
+                # sklearn is not consistent about these: iris and wine hand
+                # back plain lists, breast_cancer hands back numpy arrays. Any
+                # caller then writing `feature_names or []` gets "the truth
+                # value of an array is ambiguous" and the whole experiment 500s,
+                # so they are normalised to lists of str here rather than
+                # defended against at each use.
                 return {
                     "data": data.data.tolist(),
                     "target": data.target.tolist(),
-                    "feature_names": data.feature_names,
-                    "target_names": data.target_names,
+                    "feature_names": [str(name) for name in data.feature_names],
+                    "target_names": [str(name) for name in data.target_names],
                 }
             else:
                 df = DatasetRegistry.load_dataset(name)

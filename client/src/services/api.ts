@@ -1,5 +1,7 @@
 import type {
   DatasetPreviewResponse,
+  DecisionSurfaceRequest,
+  DecisionSurfaceResponse,
   ExperimentDetail,
   ListDatasetsResponse,
   ListExperimentsResponse,
@@ -9,7 +11,10 @@ import type {
   TrainResponse,
 } from '../types/api.ts';
 
-const BASE_URL = 'http://localhost:8000';
+// Overridable so the client can point at a backend on another port without a
+// code edit. Safe to inline into the bundle — it is an address, not a secret;
+// anything that *is* a secret stays behind the backend (see ROADMAP.md).
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 
 /**
  * API client for ML Playground backend
@@ -135,6 +140,27 @@ export const api = {
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.detail || 'Training failed')
+    }
+    return response.json()
+  },
+
+  /**
+   * Map what a model predicts across two columns, so the method can be drawn
+   * rather than only scored.
+   * @param request - Same as training, plus the two axes (optional)
+   */
+  async decisionSurface(request: DecisionSurfaceRequest): Promise<DecisionSurfaceResponse> {
+    const response = await fetch(`${BASE_URL}/decision-surface`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(request)
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Could not draw the decision surface')
     }
     return response.json()
   },
