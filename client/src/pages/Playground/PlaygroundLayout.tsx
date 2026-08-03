@@ -46,7 +46,7 @@ function PlaygroundLayout() {
 
     return (
         <EveContext.Provider value={setEve}>
-            <div className="playground-layout">
+            <div className="playground-layout page-container">
                 <aside className="playground-eve">
                     <Eve mood={eve.mood} message={eve.message} bubblePlacement="below" size="lg" />
                 </aside>

@@ -1,9 +1,13 @@
 /* ===== About ===== */
 
+/* Sits in the shared frame like everything else, but the text itself stays at
+   a readable measure rather than running the full width. */
 .about {
+    padding-block: var(--spacing-2xl);
+}
+
+.about > * {
     max-width: 44rem;
-    margin: 0 auto;
-    padding: var(--spacing-2xl) var(--spacing-lg);
 }
 
 .about-header {

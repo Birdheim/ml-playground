@@ -30,6 +30,27 @@
   --color-footer: hsl(210, 80%, 20%);
   --color-footer-logo: hsl(210, 80%, 22%);
 
+  /* ===== The page frame =====
+     One width for everything, taken from the navbar. The navbar is a 1200px
+     pill floating inside a 2rem gutter, and every other container used to pick
+     its own number — the landing page and footer ran 1265px wide at a 1280px
+     viewport (edge to edge, wider than the navbar), while the playground ran
+     1152px. Nothing lined up with the thing at the top of the screen.
+
+     `.page-container` below reproduces the navbar's own sizing exactly, so
+     content and navbar share an edge at every width, and the gutter on a
+     narrow screen is the same one the navbar already uses. */
+  --page-max: 1200px;
+  --page-gutter: 2rem;
+
+  /* How far the floating navbar reaches down the screen: where it starts, plus
+     its height, plus a little air. Anything sticky has to clear this or it
+     slides under the navbar — which is exactly what Eve was doing, sticking at
+     48px against a navbar whose bottom edge is at 71px. */
+  --nav-top: 1rem;
+  --nav-height: 3.5rem;
+  --nav-clearance: calc(var(--nav-top) + var(--nav-height) + var(--spacing-md));
+
   /* Spacing System */
   --spacing-xs: 0.25rem;  /* 4px */
   --spacing-sm: 0.5rem;   /* 8px */
@@ -171,6 +192,63 @@
   --shadow-md: 0 4px 6px -1px hsl(0, 0%, 0%, 0.4);
   --shadow-lg: 0 10px 15px -3px hsl(0, 0%, 0%, 0.5);
   --shadow-xl: 0 20px 25px -5px hsl(0, 0%, 0%, 0.5);
+}
+
+/*
+ * The shared page frame. `min()` rather than max-width plus padding, because
+ * that is how the navbar sizes itself: a fixed maximum, but never closer to the
+ * edge than the gutter. Reproducing it here means content lines up with the
+ * navbar at every viewport, and mobile gets the same gutter everywhere instead
+ * of each section inventing its own.
+ */
+.page-container {
+  width: min(var(--page-max), 100% - 2 * var(--page-gutter));
+  margin-inline: auto;
+}
+
+@media (max-width: 768px) {
+  :root {
+    /* matches the navbar's own narrow-screen padding */
+    --page-gutter: 1rem;
+    --nav-top: 0.5rem;
+  }
+}
+
+/*
+ * Entrance for content that has to be readable whether or not the animation
+ * ever runs — the questions on the playground, the text on About.
+ *
+ * Note there is no fill-mode: the resting state is *visible*, and the animation
+ * is decoration laid on top. A JavaScript reveal works the other way round —
+ * it pins the element at zero opacity and only turns it on once the animation
+ * plays, so anything that stops it playing leaves the page blank. That is a
+ * fine trade for a marketing section you have to scroll to. It is not a fine
+ * trade for the main content of a page.
+ *
+ * Deliberately unstaggered. Staggering needs `backwards` fill to hold each item
+ * hidden through its delay, which puts the invisible-by-default problem
+ * straight back. Items that must be visible arrive together.
+ */
+.rise-in {
+  animation: rise-in 0.4s ease-out;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
 }
 
 /* Base element styles */

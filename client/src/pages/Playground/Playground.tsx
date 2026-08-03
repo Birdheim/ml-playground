@@ -62,11 +62,14 @@ function Playground() {
                         </div>
                     ))}
 
+                {/* rise-in rather than a scroll reveal: these are the point of
+                    the page, so they animate on top of being visible instead of
+                    depending on an animation to become visible at all */}
                 {experiments.map((experiment) => (
                     <button
                         key={experiment.name}
                         type="button"
-                        className={`question-card ${experiment.available ? '' : 'is-locked'}`}
+                        className={`question-card rise-in ${experiment.available ? '' : 'is-locked'}`}
                         onClick={() =>
                             experiment.available
                                 ? navigate(`/playground/${experiment.name}`)

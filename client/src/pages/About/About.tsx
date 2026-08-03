@@ -17,8 +17,8 @@ import './About.css'
 
 function About() {
     return (
-        <div className="about page-enter">
-            <header className="about-header">
+        <div className="about page-enter page-container">
+            <header className="about-header rise-in">
                 <Eve mood="happy" size="md" />
                 <div>
                     <h1 className="about-title">About the Playground</h1>
@@ -29,7 +29,7 @@ function About() {
                 </div>
             </header>
 
-            <section className="about-section">
+            <section className="about-section rise-in">
                 <h2>Why it exists</h2>
                 <p>
                     I spent a long time learning the theory behind machine learning before I
@@ -45,7 +45,7 @@ function About() {
                 </p>
             </section>
 
-            <section className="about-section">
+            <section className="about-section rise-in">
                 <h2>What it can do today</h2>
                 <p>
                     Four questions, each one a real dataset: who survived the Titanic, which
@@ -64,7 +64,7 @@ function About() {
                 </p>
             </section>
 
-            <section className="about-section">
+            <section className="about-section rise-in">
                 <h2>Who made it</h2>
                 <p>
                     Herman Bergheim. It is built with FastAPI on the back and React on the
@@ -82,7 +82,7 @@ function About() {
                 </ul>
             </section>
 
-            <p className="about-cta">
+            <p className="about-cta rise-in">
                 <Link to="/playground">Go and try it →</Link>
             </p>
         </div>

@@ -7,16 +7,16 @@
     display: grid;
     grid-template-columns: 17rem minmax(0, 1fr);
     gap: var(--spacing-2xl);
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: var(--spacing-2xl) var(--spacing-lg);
+    padding-block: var(--spacing-2xl);
     align-items: start;
 }
 
-/* Eve stays on screen the whole way down rather than scrolling away */
+/* Eve stays on screen the whole way down rather than scrolling away. She has
+   to stop below the floating navbar, not behind it — sticking at 3rem put her
+   head under a navbar whose bottom edge sits at 71px. */
 .playground-eve {
     position: sticky;
-    top: var(--spacing-2xl);
+    top: var(--nav-clearance);
 }
 
 .playground-content {
