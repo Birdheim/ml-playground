@@ -108,6 +108,8 @@ export interface TrainResponse {
   n_test: number;
   n_train: number;
   n_mistakes: number;
+  /** One entry per test example, in test order: true where it was right. */
+  outcomes: boolean[];
   mistakes: Mistake[];
   class_names: string[];
   feature_names: string[];
