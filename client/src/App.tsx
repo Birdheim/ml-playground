@@ -6,6 +6,7 @@ import Playground from './pages/Playground';
 import PlaygroundLayout from './pages/Playground/PlaygroundLayout';
 import Experiment from './pages/Playground/Experiment';
 import WeAreUnpacking from './pages/WeAreUnpacking';
+import About from './pages/About';
 import Footer from './components/Footer';
 import './App.css';
 
@@ -53,7 +54,7 @@ function App() {
             <Route path="/playground/:name" element={<Experiment />} />
           </Route>
           <Route path="/learn" element={<WeAreUnpacking />} />
-          <Route path="/about" element={<WeAreUnpacking />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </main>
       <Footer />
