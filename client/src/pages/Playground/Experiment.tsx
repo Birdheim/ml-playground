@@ -5,6 +5,7 @@ import Eve, { type EveMood } from '../../components/Eve'
 import DecisionSurface from '../../components/DecisionSurface'
 import ModelDiagram from '../../components/ModelDiagram'
 import ResultDots from '../../components/ResultDots'
+import Skeleton, { SkeletonText } from '../../components/Skeleton'
 import StyledButton from '../../components/Button'
 import type {
     DatasetPreviewResponse,
@@ -315,13 +316,25 @@ function Experiment() {
         )
     }
 
+    // An empty <main> here used to let the footer sit just under the navbar and
+    // then leap down the page when the experiment arrived. The skeleton is
+    // shaped like the intro stage — a question, a table, a button — so the
+    // layout is already close to right before anything loads.
     if (!experiment || !preview) {
         return (
             <div className="experiment">
                 <aside className="experiment-eve">
                     <Eve mood="neutral" message="One moment…" bubblePlacement="below" size="lg" />
                 </aside>
-                <main className="experiment-main" />
+                <main className="experiment-main">
+                    <Link to="/playground" className="back-link">← Back to the questions</Link>
+                    <Skeleton width="60%" height="2.25rem" className="experiment-title-skeleton" />
+                    <section className="stage">
+                        <SkeletonText lines={2} />
+                        <Skeleton shape="block" height="12rem" className="stage-skeleton-table" />
+                        <Skeleton shape="block" width="10rem" height="2.75rem" />
+                    </section>
+                </main>
             </div>
         )
     }
@@ -541,13 +554,27 @@ function Experiment() {
 
                         {/* sits between the model cards and the settings, so both
                             of the things that change it are next to what changed */}
-                        {surface && (
+                        {surface ? (
                             <DecisionSurface
                                 surface={surface}
                                 labelFor={label}
                                 onAxisChange={handleAxisChange}
                                 isLoading={isDrawing}
                             />
+                        ) : (
+                            // Shaped part for part against the real component —
+                            // legend, plot, axis pickers, caption — because a
+                            // placeholder that is merely present but the wrong
+                            // height still shoves the settings down when the
+                            // picture lands. Measured at 688px against its 700.
+                            <div className="surface-placeholder">
+                                <Skeleton width="12rem" className="surface-placeholder-legend" />
+                                <Skeleton shape="block" className="surface-placeholder-plot" />
+                                <Skeleton shape="block" className="surface-placeholder-axes" />
+                                <div className="surface-placeholder-caption">
+                                    <SkeletonText lines={5} />
+                                </div>
+                            </div>
                         )}
 
                         {selectedModel && (

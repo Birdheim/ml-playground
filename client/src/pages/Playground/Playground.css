@@ -67,6 +67,19 @@
     color: var(--color-primary);
 }
 
+/* Holds a card's worth of space while the catalogue is in flight. Not a button,
+   so it needs the card's own spacing spelled out. */
+.question-card.is-placeholder {
+    display: block;
+    box-shadow: none;
+    background-color: var(--card-background);
+    cursor: default;
+}
+
+.question-card.is-placeholder .skeleton:first-child {
+    margin-bottom: var(--spacing-md);
+}
+
 /* Locked questions stay visible on purpose: seeing what is coming is more
    encouraging than a gallery that looks finished. */
 .question-card.is-locked {

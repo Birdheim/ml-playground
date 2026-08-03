@@ -263,6 +263,48 @@
     font-variant-numeric: tabular-nums;
 }
 
+/* ===== Loading placeholders ===== */
+
+.experiment-title-skeleton {
+    margin-bottom: var(--spacing-xl);
+}
+
+.stage-skeleton-table {
+    margin: var(--spacing-lg) 0;
+}
+
+/* Mirrors DecisionSurface part for part — legend, plot, axis pickers, caption —
+   so the real picture drops into space the placeholder was already holding
+   rather than pushing the settings below it down the page. */
+.surface-placeholder {
+    margin: var(--spacing-lg) 0 var(--spacing-xl);
+}
+
+.surface-placeholder-legend {
+    height: 1.3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.surface-placeholder-plot {
+    aspect-ratio: 3 / 2;
+    width: 100%;
+}
+
+.surface-placeholder-axes {
+    height: 2.45rem;
+    margin-top: var(--spacing-md);
+}
+
+.surface-placeholder-caption {
+    margin-top: var(--spacing-md);
+}
+
+@media (max-width: 860px) {
+    .surface-placeholder-plot {
+        aspect-ratio: 1 / 1;
+    }
+}
+
 /* ===== Reopening the data ===== */
 
 .recall {
