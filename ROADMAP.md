@@ -18,6 +18,37 @@ Two working principles:
 - **Easy to extend.** Adding a new model or dataset should touch as few places
   as possible.
 
+## Working on this repo
+
+**Decision: merges into `main` never fast-forward.** Work happens on a branch
+and comes back through a merge commit, so each piece of work stays a single
+identifiable thing in the history rather than dissolving into a line of
+unrelated commits.
+
+This is enforced by git rather than by remembering:
+
+```
+git config branch.main.mergeOptions "--no-ff"
+```
+
+It is scoped to `main` only — merges into other branches still fast-forward
+normally. Note this is local config, so it lives in `.git/config` and does not
+travel with a clone.
+
+The point is being able to wind back. With a merge commit, undoing a whole
+feature is one command regardless of how many commits it contained:
+
+```
+git revert -m 1 <merge-sha>
+```
+
+Without it, a branch that had five commits leaves five commits on `main` with
+nothing marking where the feature started or ended.
+
+Everything merged before this decision (up to `41dcaa0`) went in as a
+fast-forward. That history happens to still be easy to unpick because each
+feature landed as exactly one commit — but that was luck, not design.
+
 ## Eve
 
 Eve is the mascot and the guide. She is not decoration — she is how the site
