@@ -1,3 +1,4 @@
+import AutoHeight from '../AutoHeight'
 import eveNeutral from '../../assets/eve.svg'
 import eveCheer from '../../assets/eve_cheer.svg'
 import eveHiding from '../../assets/eve_hiding.svg'
@@ -30,11 +31,16 @@ function Eve({ mood = 'neutral', message, bubblePlacement = 'right', size = 'md'
                 alt={`Eve, the assistant, looking ${mood}`}
             />
             {message && (
-                // keyed on the message so the bubble replays its animation when
-                // Eve changes what she is saying
-                <p className="eve-bubble" key={message}>
-                    {message}
-                </p>
+                // The bubble itself stays mounted so it can grow and shrink
+                // between one line and five instead of snapping — it was
+                // measured jumping 21px in a single frame. Only the text inside
+                // is keyed, so a new line fades in while the box resizes
+                // around it.
+                <div className="eve-bubble">
+                    <AutoHeight>
+                        <p className="eve-bubble-text" key={message}>{message}</p>
+                    </AutoHeight>
+                </div>
             )}
         </div>
     )
