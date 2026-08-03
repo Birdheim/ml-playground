@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Eve, { type EveMood } from '../../components/Eve'
+import AutoHeight from '../../components/AutoHeight'
 import './PlaygroundLayout.css'
 
 /**
@@ -51,10 +52,19 @@ function PlaygroundLayout() {
                     <Eve mood={eve.mood} message={eve.message} bubblePlacement="below" size="lg" />
                 </aside>
 
-                {/* only the column beside her fades between routes */}
-                <div className="playground-content page-enter" key={location.pathname}>
-                    <Outlet />
-                </div>
+                {/*
+                  AutoHeight sits outside the keyed element on purpose. Keyed
+                  content is torn down and rebuilt on every navigation, so an
+                  AutoHeight inside it would be rebuilt too and have no previous
+                  height to animate from — which is why opening a question still
+                  snapped while the stages inside it had already been smoothed.
+                  Out here it survives the route change and animates across it.
+                */}
+                <AutoHeight>
+                    <div className="playground-content page-enter" key={location.pathname}>
+                        <Outlet />
+                    </div>
+                </AutoHeight>
             </div>
         </EveContext.Provider>
     )

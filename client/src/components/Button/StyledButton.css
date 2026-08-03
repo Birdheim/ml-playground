@@ -1,6 +1,6 @@
 .btn {
     background: var(--color-accent);
-    color: white;
+    color: var(--text-on-brand);
     border: none;
     padding: 1rem 1rem;
     font-size: 1rem;
@@ -14,8 +14,7 @@
 .btn-hero {
     padding: 1rem 2rem;
     background: linear-gradient(to right, var(--color-brand), var(--color-brand-accent));
-    color: white;
-    border-color: #2563eb;
+    color: var(--text-on-brand);
     font-size: 1.25rem;
     box-shadow:
         0 6px 12px rgba(59, 130, 246, 0.2),

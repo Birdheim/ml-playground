@@ -31,6 +31,16 @@
     width: 220px;
 }
 
+/*
+ * The bubble is built from the same parts as a question card — same surface,
+ * same border, same 16px radius — with a tail added.
+ *
+ * It used to be a filled slab of --color-accent-dark with an 8px radius, which
+ * put the single most saturated block on the page next to the questions it was
+ * meant to be introducing, in a shape that matched nothing else on screen. A
+ * card that happens to have a tail reads as Eve talking without shouting over
+ * the thing she is talking about, and it follows the theme for free.
+ */
 .eve-bubble {
     position: relative;
     /* nudge the bubble down to sit level with Eve's head rather than her antenna */
@@ -41,33 +51,58 @@
        small one keeps the very shortest lines from looking like a label. */
     min-height: 3.5rem;
     padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    background-color: var(--color-accent-dark);
-    color: var(--text-on-brand);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--card-background);
+    color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
     line-height: 1.5;
     letter-spacing: 0.01em;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
     animation: eve-bubble-in var(--transition-slow) ease-out;
 }
 
-/* little tail pointing back towards Eve */
-.eve-bubble::before {
+/*
+ * The tail, in two layers: the ::before is the border colour and the ::after is
+ * the surface, sitting one pixel in front of it. A single triangle cannot have
+ * a border on two sides only, so this is how a bordered bubble gets a tail
+ * without the outline stopping dead where the tail begins.
+ */
+.eve-bubble::before,
+.eve-bubble::after {
     content: '';
     position: absolute;
     border: 0.5rem solid transparent;
 }
 
-.eve-bubble-right .eve-bubble::before {
+.eve-bubble-right .eve-bubble::before,
+.eve-bubble-right .eve-bubble::after {
     top: 1.25rem;
     right: 100%;
-    border-right-color: var(--color-accent-dark);
+}
+
+.eve-bubble-right .eve-bubble::before {
+    border-right-color: var(--color-border);
+}
+
+.eve-bubble-right .eve-bubble::after {
+    margin-right: -1px;
+    border-right-color: var(--card-background);
+}
+
+.eve-bubble-left .eve-bubble::before,
+.eve-bubble-left .eve-bubble::after {
+    top: 1.25rem;
+    left: 100%;
 }
 
 .eve-bubble-left .eve-bubble::before {
-    top: 1.25rem;
-    left: 100%;
-    border-left-color: var(--color-accent-dark);
+    border-left-color: var(--color-border);
+}
+
+.eve-bubble-left .eve-bubble::after {
+    margin-left: -1px;
+    border-left-color: var(--card-background);
 }
 
 .eve-bubble-below .eve-bubble {
@@ -75,10 +110,22 @@
     max-width: 100%;
 }
 
-.eve-bubble-below .eve-bubble::before {
+/* centred under Eve rather than at a fixed 2rem, which pointed at her shoulder
+   in a 17rem rail and at nothing at all once the rail went full width */
+.eve-bubble-below .eve-bubble::before,
+.eve-bubble-below .eve-bubble::after {
     bottom: 100%;
-    left: 2rem;
-    border-bottom-color: var(--color-accent-dark);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.eve-bubble-below .eve-bubble::before {
+    border-bottom-color: var(--color-border);
+}
+
+.eve-bubble-below .eve-bubble::after {
+    margin-bottom: -1px;
+    border-bottom-color: var(--card-background);
 }
 
 /* A new line fades in while the box resizes around it. No fill-mode, so if the
