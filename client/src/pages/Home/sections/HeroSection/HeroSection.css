@@ -9,25 +9,29 @@
     position: relative;
 }
 
-/* .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url('../../../../assets/blob.svg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(200px);
-    z-index: -100;
-
-} */
-
 .hero-wrapper {
     width: 100%;
     display: flex;
     align-items: center;
     flex-direction: column;
     gap: 4rem;
+}
+
+/*
+ * The hero animates in from opacity 0, and framer-motion does not check the
+ * reduced-motion setting on its own — so without this a visitor who has asked
+ * their system for less movement still gets the staggered fade. Matches the
+ * guards already in Eve.css and Experiment.css.
+ *
+ * It doubles as a floor: whatever else happens, the content is visible unless
+ * an animation is actively overriding it.
+ */
+@media (prefers-reduced-motion: reduce) {
+    .hero-wrapper,
+    .hero-wrapper * {
+        opacity: 1 !important;
+        transform: none !important;
+    }
 }
 
 .hero-container {

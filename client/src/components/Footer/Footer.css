@@ -45,6 +45,11 @@
     font-size: 1rem;
 }
 
+.footer-unbuilt span {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.45);
+}
+
 .footer-contact {
     text-align: right;
 }
