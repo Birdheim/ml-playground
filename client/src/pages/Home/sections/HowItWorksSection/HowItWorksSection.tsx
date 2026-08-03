@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 import ModelDiagram from '../../../../components/ModelDiagram'
+import Reveal from '../../../../components/Reveal'
 import { api } from '../../../../services/api'
 import type { ModelInfo } from '../../../../types/api'
 import './HowItWorksSection.css'
@@ -46,42 +46,44 @@ function HowItWorksSection() {
 
     return (
         <section className="how">
-            <motion.div
-                className="how-container"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0, transition: { duration: 0.5 } }}
-                viewport={{ once: true, amount: 0.3 }}
-            >
-                <h2 className="how-title">How it works</h2>
+            <div className="how-container page-container">
+                {/* Each piece arrives in turn rather than the whole section
+                    landing as one block, which is what made the old single
+                    reveal feel like the page was catching up with the scroll. */}
+                <Reveal trigger="view">
+                    <h2 className="how-title">How it works</h2>
+                </Reveal>
 
                 <ol className="how-steps">
                     {STEPS.map((step, i) => (
-                        <li key={step.title} className="how-step">
+                        <Reveal key={step.title} index={i} as="li" trigger="view" className="how-step">
                             <span className="how-step-number">{i + 1}</span>
                             <h3 className="how-step-title">{step.title}</h3>
                             <p className="how-step-body">{step.body}</p>
-                        </li>
+                        </Reveal>
                     ))}
                 </ol>
 
                 {models.length > 0 && (
                     <div className="how-methods">
-                        <p className="how-methods-lead">
-                            There is more than one way for a computer to work something out.
-                            You can switch between them and watch both the answer and the
-                            reasoning change.
-                        </p>
+                        <Reveal trigger="view">
+                            <p className="how-methods-lead">
+                                There is more than one way for a computer to work something out.
+                                You can switch between them and watch both the answer and the
+                                reasoning change.
+                            </p>
+                        </Reveal>
                         <ul className="how-method-list">
-                            {models.map((model) => (
-                                <li key={model.name} className="how-method">
+                            {models.map((model, i) => (
+                                <Reveal key={model.name} index={i} as="li" trigger="view" className="how-method">
                                     <ModelDiagram model={model.name} />
                                     <span className="how-method-label">{model.label}</span>
-                                </li>
+                                </Reveal>
                             ))}
                         </ul>
                     </div>
                 )}
-            </motion.div>
+            </div>
         </section>
     )
 }

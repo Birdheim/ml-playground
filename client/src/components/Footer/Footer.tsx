@@ -6,7 +6,7 @@ function Footer() {
 
   return (
     <footer className="footer">
-      <div className="footer-container">
+      <div className="footer-container page-container">
         {/* Two of these three were listed flat alongside classification, which
             promised a visitor two whole capabilities that do not exist. Marked
             the same way the locked cards in the gallery are, so the site says
@@ -31,7 +31,7 @@ function Footer() {
           </ul>
         </div>
       </div>
-      <div className="footer-bottom-logo">
+      <div className="footer-bottom-logo page-container">
         <AutoSizeText boldText="Machine Learning" regularText="Playground" />
       </div>
     </footer>

@@ -33,7 +33,7 @@ function HeroSection() {
                 initial="hidden"
                 animate="show"
             >
-                <motion.div className="hero-container"
+                <motion.div className="hero-container page-container"
                     variants={{
                         hidden: { opacity: 0 }, show: {
                             opacity: 1,
@@ -87,7 +87,7 @@ function HeroSection() {
                     </motion.div>
                 </motion.div>
 
-                <motion.div className="features-container"
+                <motion.div className="features-container page-container"
                     variants={{
                         hidden: { opacity: 0 }, show: {
                             opacity: 1,
