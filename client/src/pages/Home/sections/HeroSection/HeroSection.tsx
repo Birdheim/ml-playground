@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import eve from '../../../../assets/eve.svg'
-import eveCheer from '../../../../assets/eve_cheer.svg'
+import Eve, { type EveMood } from "../../../../components/Eve";
 import FeatureCard from "../../../../components/FeatureCard";
 import './HeroSection.css'
-import FlowingGridBackground from '../Flowinggridbackground';
 import AutoSizeText from "../../../../components/AutoSizeText";
 import StyledButton from "../../../../components/Button";
 import { motion } from 'framer-motion'
 
 function HeroSection() {
     const navigate = useNavigate()
-    const [robotImage, setRobotImage] = useState(eve);
+    const [mood, setMood] = useState<EveMood>('neutral');
 
     const featureText = [
         "Heard about Machine Learning, but still not quite sure what it's all about?",
@@ -21,13 +19,6 @@ function HeroSection() {
 
     return (
         <section className="hero">
-            {/* <FlowingGridBackground 
-       opacity={0.1}      // Optional: adjust visibility (0-1)
-        rows={20}          // Optional: number of rows
-        cols={50}          // Optional: number of columns
-        speed={0.01}       // Optional: animation speed
-         /> */}
-
             <motion.div
                 className="hero-wrapper"
                 variants={{
@@ -61,30 +52,33 @@ function HeroSection() {
                         </div>
                         <StyledButton
                             variant="hero"
-                            onMouseEnter={() => setRobotImage(eveCheer)}
-                            onMouseLeave={() => setRobotImage(eve)}
+                            onMouseEnter={() => setMood('happy')}
+                            onMouseLeave={() => setMood('neutral')}
                             onClick={() => navigate('/playground')}
                         >
                             Go to Playground →
                         </StyledButton>
                     </motion.div>
+                    {/* the same Eve component the playground uses, so she
+                        arrives already introduced rather than turning out to
+                        have a voice only after you click through */}
                     <motion.div className="hero-image"
+                        onMouseEnter={() => setMood('happy')}
+                        onMouseLeave={() => setMood('neutral')}
                         variants={{
                             hidden: { opacity: 0 }, show: {
                                 opacity: 1,
-                                scale: 1.1,
                                 transition: {
                                     duration: 0.5
                                 }
                             }
                         }}
                     >
-                        <img
-                            src={robotImage}
-                            alt="ML Robot named Eve"
-                            className="robot-image"
-                            onMouseEnter={() => setRobotImage(eveCheer)}
-                            onMouseLeave={() => setRobotImage(eve)}
+                        <Eve
+                            mood={mood}
+                            size="lg"
+                            bubblePlacement="below"
+                            message="Hi, I'm Eve. Pick something you're curious about and we'll find out together whether a computer can work it out — you get to guess first."
                         />
                     </motion.div>
                 </motion.div>

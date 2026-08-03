@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../../services/api'
 import Eve, { type EveMood } from '../../components/Eve'
+import DecisionSurface from '../../components/DecisionSurface'
 import ModelDiagram from '../../components/ModelDiagram'
+import ResultDots from '../../components/ResultDots'
 import StyledButton from '../../components/Button'
 import type {
     DatasetPreviewResponse,
+    DecisionSurfaceResponse,
     ExperimentDetail,
     Hyperparameters,
     ModelInfo,
@@ -17,13 +20,29 @@ import './Experiment.css'
 /**
  * One experiment, walked through a step at a time.
  *
- * The ordering is the whole point. A newcomer sees the data, commits to a
- * guess, and gets a result *before* being shown a single setting. Asking
- * someone to choose between a Support Vector Machine and a Decision Tree
- * before they have any reason to care is how the previous version lost them.
+ * Two things carry the whole page:
+ *
+ * 1. **Order.** A newcomer sees the data, commits to a guess, and gets a
+ *    result *before* being shown a single setting. Asking someone to choose
+ *    between a Support Vector Machine and a Decision Tree before they have any
+ *    reason to care is how the previous version lost them.
+ *
+ * 2. **Nothing is thrown away.** Every attempt stays in `runs`, the data stays
+ *    reachable, and the score is compared to the attempt before it. A stage
+ *    that erases the previous one leaves four unrelated screens; keeping them
+ *    makes it one story, which is the point of the button that says "beat that".
  */
 
 type Stage = 'intro' | 'guess' | 'result' | 'tinker'
+
+interface Run {
+    /**
+     * Captured at run time rather than read from the picker, so the history
+     * still says "Decision Tree" after the user has moved on to something else.
+     */
+    modelLabel: string
+    result: TrainResponse
+}
 
 /** The backend holds back 20% for testing; sklearn rounds that up. */
 function testSetSize(nSamples: number): number {
@@ -39,6 +58,14 @@ function plural(word: string): string {
     return word.endsWith('s') ? word : `${word}s`
 }
 
+/**
+ * How long to sit on a settings change before redrawing the picture.
+ *
+ * Dragging a slider fires continuously; without this every intermediate value
+ * would become a request. Short enough that letting go feels immediate.
+ */
+const SURFACE_DEBOUNCE_MS = 250
+
 function Experiment() {
     const { name = '' } = useParams()
 
@@ -48,12 +75,23 @@ function Experiment() {
     const [modelName, setModelName] = useState('')
     const [params, setParams] = useState<Hyperparameters>({})
     const [guess, setGuess] = useState<number | null>(null)
-    const [result, setResult] = useState<TrainResponse | null>(null)
+    const [runs, setRuns] = useState<Run[]>([])
     const [stage, setStage] = useState<Stage>('intro')
     const [isTraining, setIsTraining] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
+    const [surface, setSurface] = useState<DecisionSurfaceResponse | null>(null)
+    const [isDrawing, setIsDrawing] = useState(false)
+    // Undefined until the backend has picked for us; kept across model changes
+    // so switching from a tree to KNN redraws the same two columns and the
+    // comparison is honest.
+    const [axes, setAxes] = useState<{ x?: string; y?: string }>({})
+
+    const scoreRef = useRef<HTMLDivElement>(null)
+
     const selectedModel = models.find((m) => m.name === modelName)
+    const latest = runs.length > 0 ? runs[runs.length - 1] : null
+    const previous = runs.length > 1 ? runs[runs.length - 2] : null
 
     useEffect(() => {
         let cancelled = false
@@ -88,6 +126,56 @@ function Experiment() {
         }
     }, [name])
 
+    // On a re-run the score sits far above the settings that were just clicked.
+    // Without this the number changes off-screen and it looks like the button
+    // did nothing at all.
+    useEffect(() => {
+        if (runs.length > 1) {
+            scoreRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+    }, [runs.length])
+
+    // The picture follows the settings live rather than waiting for "Run it
+    // again" — swapping a tree for KNN and watching the boundary go from
+    // rectangles to islands is the fastest way to see that the models differ,
+    // and making someone press a button first breaks the connection.
+    useEffect(() => {
+        if (stage !== 'tinker' || !experiment || !modelName) return
+
+        let cancelled = false
+        setIsDrawing(true)
+
+        const timer = setTimeout(() => {
+            api.decisionSurface({
+                model_name: modelName,
+                dataset_name: experiment.dataset,
+                hyperparameters: params,
+                x_column: axes.x,
+                y_column: axes.y,
+            })
+                .then((response) => {
+                    if (cancelled) return
+                    setSurface(response)
+                    // Same reference when nothing moved, so adopting the
+                    // backend's automatic choice doesn't re-trigger this effect
+                    setAxes((current) =>
+                        current.x === response.x_column && current.y === response.y_column
+                            ? current
+                            : { x: response.x_column, y: response.y_column }
+                    )
+                })
+                // A failed drawing is not worth interrupting the page for: the
+                // score is the result, this is the illustration beside it.
+                .catch(() => { if (!cancelled) setSurface(null) })
+                .finally(() => { if (!cancelled) setIsDrawing(false) })
+        }, SURFACE_DEBOUNCE_MS)
+
+        return () => {
+            cancelled = true
+            clearTimeout(timer)
+        }
+    }, [stage, experiment, modelName, params, axes.x, axes.y])
+
     const nTest = preview ? testSetSize(preview.n_samples) : 0
     const nTrain = preview ? preview.n_samples - nTest : 0
     const rowLabel = experiment?.row_label ?? 'example'
@@ -102,7 +190,10 @@ function Experiment() {
                 dataset_name: experiment!.dataset,
                 hyperparameters: params,
             })
-            setResult(response)
+            setRuns((current) => [
+                ...current,
+                { modelLabel: selectedModel?.label ?? modelName, result: response },
+            ])
             setStage(nextStage)
         } catch (e) {
             setError(e instanceof Error ? e.message : 'Training failed')
@@ -117,6 +208,10 @@ function Experiment() {
         if (model) setParams(defaultParams(model))
     }
 
+    function handleAxisChange(axis: 'x' | 'y', column: string) {
+        setAxes((current) => ({ ...current, [axis]: column }))
+    }
+
     function label(column: string): string {
         return experiment?.column_labels[column] ?? column
     }
@@ -127,46 +222,79 @@ function Experiment() {
     }
 
     // ----- What Eve says, per stage -----
+    //
+    // Eve is the guide, never the thing being trained. She says "it" about the
+    // computer, because the moment the user can choose between four models,
+    // an Eve who says "I will study the passengers" is claiming to be all four
+    // of them at once — and the whole lesson is that they are different.
 
     function eveState(): { mood: EveMood; message: string } {
         if (error) return { mood: 'hiding', message: error }
         if (!experiment || !preview) return { mood: 'neutral', message: 'One moment…' }
 
         if (isTraining) {
-            return { mood: 'neutral', message: `Studying ${nTrain} ${plural(rowLabel)}… give me a second.` }
+            return {
+                mood: 'neutral',
+                message: `It's studying ${nTrain} ${plural(rowLabel)}… give me a second.`,
+            }
         }
 
         if (stage === 'intro') {
             return {
                 mood: 'neutral',
-                message: `Here are five of the ${preview.n_samples} ${plural(rowLabel)}. This is everything I get to see — no names, no story, just these numbers.`,
+                message: `Here are five of the ${preview.n_samples} ${plural(rowLabel)}. This is everything the computer gets to see — no names, no story, just these numbers.`,
             }
         }
 
         if (stage === 'guess') {
             return {
                 mood: 'neutral',
-                message: `I will study ${nTrain} ${plural(rowLabel)}, then be tested on ${nTest} I have never seen. How many do you think I will get right?`,
+                message: `It will study ${nTrain} ${plural(rowLabel)}, then face ${nTest} it has never seen. How many do you think it will get right?`,
             }
         }
 
-        if (result) {
-            const { n_correct, n_test } = result
-            const share = n_correct / n_test
-            const mood: EveMood = share >= 0.85 ? 'happy' : share < 0.6 ? 'hiding' : 'neutral'
+        if (latest) {
+            const { n_correct, n_test } = latest.result
 
-            if (guess === null) {
-                return { mood, message: `I got ${n_correct} of ${n_test} right.` }
+            // First result: the comparison that means something is their guess.
+            if (!previous) {
+                const share = n_correct / n_test
+                const mood: EveMood = share >= 0.85 ? 'happy' : share < 0.6 ? 'hiding' : 'neutral'
+
+                if (guess === null) {
+                    return { mood, message: `It got ${n_correct} of ${n_test} right.` }
+                }
+
+                const gap = n_correct - guess
+                if (Math.abs(gap) <= 2) {
+                    return { mood, message: `You said ${guess}, it got ${n_correct}. You read it almost exactly.` }
+                }
+                if (gap > 0) {
+                    return { mood, message: `You said ${guess} — it managed ${n_correct}. Better than you gave it credit for.` }
+                }
+                return { mood, message: `You said ${guess}, but it only got ${n_correct}. Harder than it looks, isn't it?` }
             }
 
-            const gap = n_correct - guess
-            if (Math.abs(gap) <= 2) {
-                return { mood, message: `You said ${guess}, I got ${n_correct}. You read me almost exactly.` }
+            // After that they are experimenting rather than guessing, so the
+            // comparison that means something is the attempt before this one.
+            const change = n_correct - previous.result.n_correct
+
+            if (change > 0) {
+                return {
+                    mood: 'happy',
+                    message: `${latest.modelLabel} got ${n_correct} — ${change} more than last time. That change paid off.`,
+                }
             }
-            if (gap > 0) {
-                return { mood, message: `You said ${guess} — I managed ${n_correct}. Better than you gave me credit for.` }
+            if (change < 0) {
+                return {
+                    mood: 'hiding',
+                    message: `${latest.modelLabel} got ${n_correct}, ${-change} fewer than last time. Not every change is an improvement.`,
+                }
             }
-            return { mood, message: `You said ${guess}, but I only got ${n_correct}. Harder than it looks, isn't it?` }
+            return {
+                mood: 'neutral',
+                message: `Still ${n_correct}. That made no difference at all — which is worth knowing too.`,
+            }
         }
 
         return { mood: 'neutral', message: '' }
@@ -200,6 +328,34 @@ function Experiment() {
 
     const columns = Object.keys(preview.samples[0] ?? {}).filter((c) => c !== 'target')
 
+    /** The five rows, shown in full at the intro and on demand after that. */
+    const sampleTable = (
+        <div className="sample-scroll">
+            <table className="sample-table">
+                <thead>
+                    <tr>
+                        {columns.map((c) => <th key={c}>{label(c)}</th>)}
+                        <th className="answer-column">
+                            {experiment.class_names ? 'What happened' : 'Answer'}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {preview.samples.map((row, i) => (
+                        <tr key={i}>
+                            {columns.map((c) => (
+                                <td key={c}>{displayValue(c, row[c])}</td>
+                            ))}
+                            <td className="answer-column">
+                                {experiment.class_names?.[Number(row.target)] ?? row.target}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    )
+
     return (
         <div className="experiment">
             <aside className="experiment-eve">
@@ -215,35 +371,12 @@ function Experiment() {
                     <section className="stage">
                         <p className="stage-lead">{experiment.teaser}</p>
 
-                        <div className="sample-scroll">
-                            <table className="sample-table">
-                                <thead>
-                                    <tr>
-                                        {columns.map((c) => <th key={c}>{label(c)}</th>)}
-                                        <th className="answer-column">
-                                            {experiment.class_names ? 'What happened' : 'Answer'}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {preview.samples.map((row, i) => (
-                                        <tr key={i}>
-                                            {columns.map((c) => (
-                                                <td key={c}>{displayValue(c, row[c])}</td>
-                                            ))}
-                                            <td className="answer-column">
-                                                {experiment.class_names?.[Number(row.target)] ?? row.target}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        {sampleTable}
 
                         <p className="stage-note">
-                            The last column is the answer. For {nTrain} of them I will show it to the
-                            computer; for the other {nTest} I will keep it hidden and see if it can
-                            work the answer out on its own.
+                            The last column is the answer. For {nTrain} of them the computer gets
+                            to see it; for the other {nTest} it stays hidden, and we find out
+                            whether the computer can work it out on its own.
                         </p>
 
                         <StyledButton onClick={() => { setGuess(Math.round(nTest * 0.7)); setStage('guess') }}>
@@ -280,6 +413,13 @@ function Experiment() {
                             </div>
                         </div>
 
+                        {/* the data is what the guess is about, so it stays one
+                            click away rather than being replaced by the slider */}
+                        <details className="recall">
+                            <summary className="recall-summary">Show me the data again</summary>
+                            {sampleTable}
+                        </details>
+
                         <StyledButton onClick={() => runTraining('result')} disabled={isTraining}>
                             {isTraining ? 'Training…' : 'Lock it in and run →'}
                         </StyledButton>
@@ -287,27 +427,59 @@ function Experiment() {
                 )}
 
                 {/* ---- Stage 3 & 4: the result, then the controls ---- */}
-                {(stage === 'result' || stage === 'tinker') && result && (
+                {(stage === 'result' || stage === 'tinker') && latest && (
                     <section className="stage">
-                        <div className="scoreline">
+                        <div className="scoreline" ref={scoreRef}>
                             <p className="score">
-                                <strong>{result.n_correct}</strong>
-                                <span className="score-of"> of {result.n_test}</span>
+                                <strong>{latest.result.n_correct}</strong>
+                                <span className="score-of"> of {latest.result.n_test}</span>
                             </p>
                             <p className="score-caption">
                                 correct, on {plural(rowLabel)} it had never seen
-                                {guess !== null && <span className="score-guess">you guessed {guess}</span>}
+                                {previous ? (
+                                    <span className="score-guess">
+                                        {latest.modelLabel}, last time {previous.result.n_correct}
+                                    </span>
+                                ) : (
+                                    guess !== null && <span className="score-guess">you guessed {guess}</span>
+                                )}
                             </p>
                         </div>
 
-                        {result.mistakes.length > 0 && (
+                        <ResultDots outcomes={latest.result.outcomes} rowLabel={rowLabel} />
+
+                        {/* "beat that" only means something if "that" is still on
+                            screen, so every attempt stays listed */}
+                        {runs.length > 1 && (
+                            <table className="run-history">
+                                <caption className="run-history-caption">Every attempt so far</caption>
+                                <tbody>
+                                    {runs.map((run, i) => (
+                                        <tr key={i} className={i === runs.length - 1 ? 'is-latest' : ''}>
+                                            <td className="run-history-n">{i + 1}</td>
+                                            <td className="run-history-model">{run.modelLabel}</td>
+                                            <td className="run-history-score">
+                                                {run.result.n_correct} of {run.result.n_test}
+                                            </td>
+                                            <td className="run-history-delta">
+                                                {i === 0
+                                                    ? ''
+                                                    : formatDelta(run.result.n_correct - runs[i - 1].result.n_correct)}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+
+                        {latest.result.mistakes.length > 0 && (
                             <>
                                 <h2 className="mistakes-title">
-                                    {result.n_mistakes === 1
+                                    {latest.result.n_mistakes === 1
                                         ? `The one ${rowLabel} it got wrong`
                                         : `Where it went wrong${
-                                              result.n_mistakes > result.mistakes.length
-                                                  ? ` — ${result.mistakes.length} of ${result.n_mistakes}`
+                                              latest.result.n_mistakes > latest.result.mistakes.length
+                                                  ? ` — ${latest.result.mistakes.length} of ${latest.result.n_mistakes}`
                                                   : ''
                                           }`}
                                 </h2>
@@ -317,13 +489,13 @@ function Experiment() {
                                             <tr>
                                                 <th>It guessed</th>
                                                 <th>Really was</th>
-                                                {Object.keys(result.mistakes[0].features).map((f) => (
+                                                {Object.keys(latest.result.mistakes[0].features).map((f) => (
                                                     <th key={f}>{label(f)}</th>
                                                 ))}
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {result.mistakes.map((mistake, i) => (
+                                            {latest.result.mistakes.map((mistake, i) => (
                                                 <tr key={i}>
                                                     <td className="guessed">{mistake.predicted}</td>
                                                     <td className="actual">{mistake.actual}</td>
@@ -365,9 +537,21 @@ function Experiment() {
                             ))}
                         </div>
 
+                        {selectedModel && <p className="model-blurb">{selectedModel.blurb}</p>}
+
+                        {/* sits between the model cards and the settings, so both
+                            of the things that change it are next to what changed */}
+                        {surface && (
+                            <DecisionSurface
+                                surface={surface}
+                                labelFor={label}
+                                onAxisChange={handleAxisChange}
+                                isLoading={isDrawing}
+                            />
+                        )}
+
                         {selectedModel && (
                             <>
-                                <p className="model-blurb">{selectedModel.blurb}</p>
                                 {selectedModel.params.map((param) => (
                                     <ParamControl
                                         key={param.name}
@@ -391,6 +575,13 @@ function Experiment() {
             </main>
         </div>
     )
+}
+
+/** "+4" / "−7" / "no change", for the history column. */
+function formatDelta(change: number): string {
+    if (change > 0) return `+${change}`
+    if (change < 0) return `−${-change}`
+    return 'no change'
 }
 
 function ParamControl({

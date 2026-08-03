@@ -78,7 +78,11 @@ def train_model(model_name: str, hyperparameters: dict, dataset_name: str = "win
                 "actual": class_name(actual),
             })
 
-    n_correct = sum(1 for p, a in zip(predictions, y_test) if p == a)
+    # One entry per test example, in test order. The frontend draws a dot per
+    # entry, so the picture is the actual result rather than a decoration:
+    # every red dot is a real row the model got wrong.
+    outcomes = [bool(p == a) for p, a in zip(predictions, y_test)]
+    n_correct = sum(outcomes)
 
     return {
         "accuracy": n_correct / len(y_test),
@@ -86,6 +90,7 @@ def train_model(model_name: str, hyperparameters: dict, dataset_name: str = "win
         "n_test": len(y_test),
         "n_train": len(y_train),
         "n_mistakes": len(y_test) - n_correct,
+        "outcomes": outcomes,
         "mistakes": mistakes,
         "class_names": class_names,
         "feature_names": feature_names,

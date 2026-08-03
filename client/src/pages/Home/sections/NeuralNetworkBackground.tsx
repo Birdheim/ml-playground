@@ -68,7 +68,7 @@ const NeuralNetworkBackground: React.FC = () => {
     // Initialize pulses
     const initializePulses = () => {
       pulsesRef.current = [];
-      connections.forEach((connection, index) => {
+      connections.forEach((connection) => {
         if (Math.random() > 0.7) { // Only 30% of connections start with a pulse
           pulsesRef.current.push({
             connection,
