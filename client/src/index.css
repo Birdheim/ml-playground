@@ -26,6 +26,20 @@
   --text-on-brand: hsl(0, 0%, 95%);         /* White text */
   --color-text-light: hsl(220, 10%, 95%);   /* Text on dark backgrounds (navbar, cards) */
 
+  /* Two dimmer steps below --text-on-brand, for body copy and asides on the
+     brand-coloured bands. Four different ad-hoc alphas were doing this job
+     (0.7, 0.82, 0.85, 0.45) because no token covered it.
+
+     Stepped on lightness around hue 220 to match --color-text-light rather
+     than by fading white, which is how the rest of this palette is built.
+     Contrast against all three brand surfaces (hero 25%, how-it-works 15%,
+     footer 20%): muted 6.07 / 8.82 / 7.39, faint 4.78 / 6.95 / 5.82. Anything
+     below 68% lightness drops the faint step under 4.5 on the hero, which is
+     why it stops at 70. */
+  --text-on-brand-muted: hsl(220, 12%, 78%);   /* body copy on a brand band */
+  --text-on-brand-faint: hsl(220, 12%, 70%);   /* asides, "not yet" labels */
+  --border-on-brand: hsl(210, 40%, 32%);       /* dividers on a brand band */
+
   /* Footer */
   --color-footer: hsl(210, 80%, 20%);
   --color-footer-logo: hsl(210, 80%, 22%);
