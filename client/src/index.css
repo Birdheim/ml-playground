@@ -15,7 +15,8 @@
 
   /* Brand Colors */
   --color-brand: hsl(210, 80%, 35%);
-  --color-brand-dark: hsl(210, 80%, 15%);
+  /* The middle of the three landing bands — see the note by --color-footer. */
+  --color-brand-dark: hsl(210, 80%, 20%);
   --color-brand-accent: hsl(210, 80%, 55%);
   --color-brand-accent-light: hsl(210, 80%, 65%);
 
@@ -40,9 +41,22 @@
   --text-on-brand-faint: hsl(220, 12%, 70%);   /* asides, "not yet" labels */
   --border-on-brand: hsl(210, 40%, 32%);       /* dividers on a brand band */
 
-  /* Footer */
-  --color-footer: hsl(210, 80%, 20%);
-  --color-footer-logo: hsl(210, 80%, 22%);
+  /*
+   * Footer — and the bottom of the three bands you scroll through on the
+   * landing page. Same three values as before, in order:
+   *
+   *   hero            --color-landing-bg   25%
+   *   how it works    --color-brand-dark   20%
+   *   footer          --color-footer       15%
+   *
+   * It used to run 25 → 15 → 20: dark, darker, then lighter again, which read
+   * as three arbitrary blues rather than a progression. Descending gives the
+   * page a floor.
+   */
+  --color-footer: hsl(210, 80%, 15%);
+  /* two points above the footer, which is what makes the giant wordmark behind
+     it read as a watermark rather than as text */
+  --color-footer-logo: hsl(210, 80%, 17%);
 
   /* ===== The page frame =====
      One width for everything, taken from the navbar. The navbar is a 1200px
